@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="icon" href="360images/icons/logo.png" type="image/x-icon">
+        <link rel = "stylesheet" type = "text/css" href = "tour.css">
+        <title>DEVEETOUR</title>
+    </head>
+    <body>
+        <!-- initial loading screen animation-->
+        <div id="initial-loading">
+            <h2>Cargando...</h2>
+        </div>
+    
+        <!-- structuring loading screen -->
+        <div id="loading-screen">
+            <img id="loading-logo" src="360images/icons/logo.png" alt="Logo DEVEESITES" loading="lazy">
+            <h2>Recorrido virtual FACPyA</h2>
+            <h1>Diseñado por DEVEESITES</h1>
+            <button class="glass-button" onclick="startTour()" aria-label="Iniciar recorrido">Iniciar recorrido</button>
+            <button class="glass-button" onclick="goToMain()" aria-label="Volver a la página principal">Volver a la página principal</button>
+        </div>
+    
+        <!-- structuring back to loading screen btn -->
+        <div id="back-to-loading" style="display: none;" onclick="returnToLoading()"></div>
+
+        <!-- structuring search bar -->
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="¿A dónde irás hoy?">
+            <button id="search-button" onclick="searchLocation()">Buscar</button>
+        </div>
+
+        <!-- Botón de ayuda -->
+        <button id="help-button" aria-label="Ayuda" onclick="showHelp()">?</button>
+
+        <!-- Modal de ayuda -->
+        <div id="help-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeHelp()">&times;</span>
+                <h2>Instrucciones de uso</h2>
+                <p>1. Utiliza los botones para iniciar el recorrido o volver a la página principal.</p>
+                <p>2. Usa la barra de búsqueda para encontrar ubicaciones específicas.</p>
+                <p>3. Desplázate por la barra de rutas para ver las ubicaciones disponibles.</p>
+                <p>4. Apunta con el cursor a los hotspots para navegar entre escenas.</p>
+                <p>¡Disfruta del recorrido virtual!</p>
+            </div>
+        </div>
+
+        <!-- structuring route container -->
+        <div id="route-container"></div>
+
+        <!-- structuring map container -->
+        <div id="map-container"></div>
+    
+        <a-scene>
+            <a-light type="ambient" intensity="0.5"></a-light>
+            <!-- aframe camera -->
+            <a-camera id="main-camera" position="0 1.6 0" fov="80">
+                <a-entity cursor="fuse: true; fuseTimeout: 1500"
+                          geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
+                          material="color: #383A3B; shader: phong"
+                          position="0 0 -1">
+                </a-entity>
+            </a-camera>
+    
+            <!-- start image -->
+            <a-sky id="panorama" src="360images/Entrada/1.webp"></a-sky>
+    
+            <!-- hotspots container -->
+            <a-entity id="hotspot-container"></a-entity>
+
+        </a-scene>
+    
+        <script>
+
+            let currentScene = "Entrada"; // Variable para mantener la escena actual
+            document.addEventListener("DOMContentLoaded", () => {
+                const initialLoading = document.getElementById("initial-loading");
+                const loadingScreen = document.getElementById("loading-screen");
+                const backBtn = document.getElementById("back-to-loading");
+                const routeContainer = document.getElementById("route-container");
+
+                // Ocultar el contenedor de carga inicial después de 2 segundos
+                setTimeout(() => {
+                    initialLoading.style.display = "none"; // Ocultar completamente del flujo del DOM
+                }, 2000);
+
+                // Mostrar la pantalla principal del menú después de 2 segundos
+                setTimeout(() => {
+                    loadingScreen.style.display = "flex"; // Asegúrate de que se muestre el menú principal
+                }, 2000);
+
+                // Asegurarse de que el botón de regreso y el contenedor de rutas estén ocultos al cargar las pantallas inicial y de menú
+                backBtn.style.display = "none";
+                routeContainer.style.display = "none";
+            });
+
+            // Función para iniciar el recorrido
+            function startTour() {
+                const loadingScreen = document.getElementById("loading-screen");
+                const backBtn = document.getElementById("back-to-loading");
+                const scene = document.querySelector("a-scene");
+                const routeContainer = document.getElementById("route-container");
+                const searchContainer = document.getElementById("search-container"); // Obtener el contenedor de búsqueda
+
+                loadingScreen.style.display = "none"; // Ocultar la pantalla de carga
+                scene.style.display = "block"; // Mostrar la escena
+                scene.style.filter = "none"; // Quitar el efecto de desenfoque
+
+                if (backBtn) {
+                    backBtn.style.display = 'block'; // Mostrar el botón
+                    backBtn.style.pointerEvents = 'auto';
+                    backBtn.style.opacity = '1';
+                }
+
+                routeContainer.style.display = "flex"; // Mostrar el contenedor de rutas
+                searchContainer.style.display = "flex"; // Mostrar la barra de búsqueda
+                showRoute(currentScene); // Mostrar la ruta inicial
+            }
+
+            // Función para volver a la pantalla de carga
+            function returnToLoading() {
+                const loadingScreen = document.getElementById("loading-screen");
+                const scene = document.querySelector("a-scene");
+                const backBtn = document.getElementById("back-to-loading");
+                const routeContainer = document.getElementById("route-container");
+                const searchContainer = document.getElementById("search-container");
+
+                // Mostrar la pantalla de carga con efecto de desenfoque
+                loadingScreen.style.display = "flex";
+                scene.style.filter = "blur(10px)";
+
+                // Efecto de iluminación al clickear el botón
+                backBtn.style.pointerEvents = "none";
+                backBtn.style.opacity = "0.5";
+
+                // Ocultar el botón de regreso
+                backBtn.style.display = "none";
+                routeContainer.style.display = "none"; // Mostrar el contenedor de rutas
+                searchContainer.style.display = "none"; // Mostrar la barra de búsqueda
+            }
+
+            const mapContainer = document.getElementById("map-container");
+            // Función para mostrar el mapa
+            function showMap() {
+                console.log('Mostrando el mapa');
+                mapContainer.style.display = 'block';
+                mapContainer.classList.add('fade-in');
+                setTimeout(() => {
+                    mapContainer.classList.remove('fade-in');
+                }, 500);
+            }
+
+            // Función para ocultar el mapa
+            function hideMap() {
+                console.log('Ocultando el mapa');
+                mapContainer.classList.add('fade-out');
+                setTimeout(() => {
+                    mapContainer.style.display = 'none';
+                    mapContainer.classList.remove('fade-out');
+                }, 500);
+            }
+
+            // Función para crear un marcador en el mapa
+            function createMarker(sceneName, position) {
+                const marker = document.createElement('div');
+                marker.className = 'map-marker';
+                marker.style.left = `${position.x}px`;
+                marker.style.top = `${position.y}px`;
+                marker.addEventListener('click', () => {
+                    loadScene(sceneName);
+                    hideMap();
+                });
+                mapContainer.appendChild(marker);
+            }
+
+            // Función para crear una ruta en el mapa
+            function createRoute(startPos, endPos) {
+                console.log(`Creando ruta desde ${startPos} hasta ${endPos}`);
+                const route = document.createElement('div');
+                route.className = 'map-route';
+                route.style.left = `${startPos.x}px`;
+                route.style.top = `${startPos.y}px`;
+                route.style.height = `${Math.sqrt(Math.pow(endPos.x - startPos.x, 2) + Math.pow(endPos.y - startPos.y, 2))}px`;
+                route.style.transform = `rotate(${Math.atan2(endPos.y - startPos.y, endPos.x - startPos.x)}rad)`;
+                mapContainer.appendChild(route);
+            }
+
+            // Función para mostrar la ruta en el mapa
+            function showRouteOnMap(route) {
+                console.log('Mostrando ruta en el mapa:', route);
+                mapContainer.innerHTML = ''; // Limpiar el mapa
+                route.forEach((scene, index) => {
+                    const position = { x: index * 50 + 20, y: 150 }; // Posiciones de ejemplo
+                    createMarker(scene, position);
+                    if (index > 0) {
+                        const prevPosition = { x: (index - 1) * 50 + 20, y: 150 };
+                        createRoute(prevPosition, position);
+                    }
+                });
+            }
+
+            // Función para reanudar el recorrido
+            function resumeTour() {
+                const loadingScreen = document.getElementById("loading-screen");
+                const scene = document.querySelector("a-scene");
+                const backBtn = document.getElementById("back-to-loading");
+                const resumeBtn = document.getElementById("resume-tour");
+                const routeContainer = document.getElementById("route-container");
+
+                // Ocultar la pantalla de carga y quitar el efecto de desenfoque
+                loadingScreen.style.display = "none";
+                scene.style.filter = "none";
+
+                // Mostrar el botón de regreso
+                backBtn.style.display = "block";
+                backBtn.style.pointerEvents = "auto";
+                backBtn.style.opacity = "1";
+
+                // Ocultar el botón de reanudar
+                resumeBtn.style.display = "none";
+
+                // Mostrar el contenedor de rutas
+                routeContainer.style.display = "flex";
+                showRoute(currentScene); // Mostrar la ruta actual
+            }
+
+            // Función para volver a la página principal
+            function goToMain() {
+                window.location.href = "https://deveesites.com/"; 
+            }
+            // Definir escenas con sus respectivos hotspots
+            const scenes = {
+                Entrada: {
+                    image: "360images/Entrada/1.webp",
+                    hotspots: [
+                        {
+                            position: "-1 1 0",
+                            targetScene: "Lobby",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5",
+                            material: "src: 360images/icons/iconup.png; transparent: true",
+                            rotation: "-90 90 0.5",
+                        }
+                    ]
+                },
+                Lobby: {
+                    image: "360images/Lobby/2.webp",
+                    hotspots: [
+                        {
+                            position: "-1 1 0",
+                            targetScene: "Pasillo",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
+                            rotation: "-90 90 45", // Personalización
+                        },
+                        {
+                            position: "1 1 0",
+                            targetScene: "Entrada",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/icondown.png; transparent: true", // Personalización
+                            rotation: "-90 90 0", // Personalización
+                        }
+                    ]
+                },
+                Pasillo: {
+                    image: "360images/Pasillo_principal/3.webp",
+                    hotspots: [
+                        {
+                            position: "1 1 -0.20",
+                            targetScene: "Lobby",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/icondown.png; transparent: true", // Personalización
+                            rotation: "-90 90 0", // Personalización
+                        },
+                        {
+                            position: "0.2 1 1.2",
+                            targetScene: "Intercambio",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
+                            rotation: "-90 90 90", // Personalización
+                        }
+                    ]
+                },
+                Intercambio: {
+                    image: "360images/Intercambio/4.webp",
+                    hotspots: [
+                        {
+                            position: "-0.3 1 1",
+                            targetScene: "Pasillo",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/icondown.png; transparent: true", // Personalización
+                            rotation: "-90 90 -90", // Personalización
+                        },
+                        {
+                            position: "-.5 1 -1",
+                            targetScene: "Titulación",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
+                            rotation: "-90 90 -90", // Personalización
+                        }
+                    ]
+                },
+                Titulación: {
+                    image: "360images/Titulacion/5.webp",
+                    hotspots: [
+                        {
+                            position: "-0.3 1 1",
+                            targetScene: "Intercambio",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/icondown.png; transparent: true", // Personalización
+                            rotation: "-90 90 -90", // Personalización
+                        },
+                        {
+                            position: "-.5 1 -1",
+                            targetScene: "Biblioteca",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
+                            rotation: "-90 90 -90", // Personalización
+                        }           
+                    ]
+                },
+                Biblioteca: {
+                    image: "360images/Biblioteca/6.webp",
+                    hotspots: [
+                        {
+                            position: "-0.3 1 1",
+                            targetScene: "Titulación",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/icondown.png; transparent: true", // Personalización
+                            rotation: "-90 90 -90", // Personalización
+                        },
+                        {
+                            position: "-.5 1 -1",
+                            targetScene: "Stic",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
+                            rotation: "-90 90 -90", // Personalización
+                        }
+                    ]
+                },
+                Stic: {
+                    image: "360images/cp_Stic/7.webp",
+                    hotspots: [
+                        {
+                            position: "-0.3 1 1",
+                            targetScene: "Biblioteca",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/icondown.png; transparent: true", // Personalización
+                            rotation: "-90 90 -90", // Personalización
+                        },
+                        {
+                            position: "-.5 1 -1",
+                            targetScene: "Pasillo",
+                            geometry: "primitive: plane; height: 0.5; width: 0.5", // Personalización
+                            material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
+                            rotation: "-90 90 -90", // Personalización
+                        }
+                    ]
+                },
+            };
+
+            const panorama = document.getElementById("panorama");
+            const hotspotContainer = document.getElementById("hotspot-container");
+            const cameraEl = document.getElementById("main-camera");
+            
+            // Función para cargar una escena
+            function loadScene(sceneName) {
+                const scene = scenes[sceneName];
+                if (!scene) {
+                    console.error(`Escena "${sceneName}" no encontrada.`);
+                    return;
+                }
+
+                // Actualizar la escena actual
+                currentScene = sceneName;
+
+                // Añadir clase fade para la transición
+                panorama.classList.add('fade');
+                console.log('Clase fade añadida');
+
+                // Cambiar la imagen del panorama después de un pequeño retraso para permitir la animación
+                setTimeout(() => {
+                    panorama.setAttribute("src", scene.image);
+                    console.log('Imagen cambiada');
+
+                    //se ocupa quitar la clase fade despues de que la imagen cambie :D
+                    panorama.addEventListener('load',() => {
+                        panorama.classList.remove('fade');
+                        console.log('Clase fade eliminada');
+                    }, {once: true});
+                }, 750); // Ajusta el tiempo según sea necesario
+
+                // Eliminar la clase fade después de la animación
+                // setTimeout(() => {
+                //     panorama.classList.remove('fade');
+                //     console.log('Clase fade eliminada');
+                // }, 2500); // Ajusta el tiempo según sea necesario
+
+                //se creo la funcion updateHotSpots lml
+                updateHotspots(scene);
+
+                // Mostrar la ruta actualizada
+                showRoute(currentScene);
+            }
+
+            function updateHotspots(scene) {
+                // Clear existing hotspots
+                while (hotspotContainer.firstChild) {
+                    hotspotContainer.removeChild(hotspotContainer.firstChild);
+                }
+
+                // Add new hotspots with improved visibility
+                scene.hotspots.forEach((hotspot) => {
+                    const hotspotEl = document.createElement("a-entity");
+                    
+                    // Set initial attributes
+                    hotspotEl.setAttribute("geometry", hotspot.geometry);
+                    hotspotEl.setAttribute("material", {
+                        src: hotspot.material.split('src: ')[1].split(';')[0],
+                        transparent: true,
+                        opacity: 0.8,  // Start with visible opacity
+                        side: 'double' // Make the plane visible from both sides
+                    });
+                    
+                    // Set position and rotation
+                    hotspotEl.setAttribute("position", hotspot.position);
+                    hotspotEl.setAttribute("rotation", hotspot.rotation);
+                    
+                    // Add billboard component to always face camera
+                    hotspotEl.setAttribute("billboard", "");
+                    
+                    // Add animation for hover effect
+                    hotspotEl.setAttribute("animation__hover", {
+                        property: "scale",
+                        dir: "alternate",
+                        dur: 1000,
+                        easing: "easeInOutSine",
+                        loop: true,
+                        to: "1.1 1.1 1.1"
+                    });
+
+                    // Add click event listener
+                    hotspotEl.addEventListener("click", () => loadScene(hotspot.targetScene));
+                    
+                    // Add mouseenter/mouseleave events for hover effect
+                    hotspotEl.addEventListener("mouseenter", function() {
+                        this.setAttribute("material", "opacity", 1.0);
+                    });
+                    
+                    hotspotEl.addEventListener("mouseleave", function() {
+                        this.setAttribute("material", "opacity", 0.8);
+                    });
+
+                    hotspotContainer.appendChild(hotspotEl);
+                    });
+                }
+
+            // Cargar la escena inicial
+            loadScene("Entrada");
+
+            // Definir rutas entre escenas
+            const routes = {
+                Entrada: ["Lobby"],
+                Lobby: ["Entrada", "Pasillo"],
+                Pasillo: ["Lobby", "Intercambio"],
+                Intercambio: ["Pasillo", "Titulación"],
+                Titulación: ["Intercambio", "Biblioteca"],
+                Biblioteca: ["Titulación", "Stic"],
+                Stic: ["Biblioteca", "Pasillo"]
+            };
+
+            // Función para encontrar la ruta más corta
+            function findRoute(start, end) {
+                const queue = [[start]];
+                const visited = new Set();
+
+                while (queue.length > 0) {
+                    const path = queue.shift();
+                    const node = path[path.length - 1];
+
+                    if (visited.has(node)) continue;
+                    visited.add(node);
+
+                    if (node === end) {
+                        return path;
+                    }
+
+                    const neighbors = routes[node] || [];
+                    for (const neighbor of neighbors) {
+                        const newPath = [...path, neighbor];
+                        queue.push(newPath);
+                    }
+                }
+
+                return null; // Ruta no encontrada
+            }
+
+
+            // Función para mostrar la ruta
+            document.addEventListener("DOMContentLoaded", () => {
+                const routeContainer = document.getElementById("route-container");
+
+                routeContainer.addEventListener("scroll", () => {
+                    updateVisibleLocations();
+                });
+            });
+
+            function updateVisibleLocations() {
+                const routeContainer = document.getElementById("route-container");
+                const spans = routeContainer.querySelectorAll("span");
+                const containerWidth = routeContainer.offsetWidth;
+                const scrollLeft = routeContainer.scrollLeft;
+
+                spans.forEach((span, index) => {
+                    const spanLeft = span.offsetLeft;
+                    const spanRight = spanLeft + span.offsetWidth;
+
+                    if (spanLeft >= scrollLeft && spanRight <= scrollLeft + containerWidth) {
+                        span.style.opacity = "1"; // Mostrar la ubicación
+                    } else {
+                        span.style.opacity = "0.5"; // Atenuar la ubicación
+                    }
+                });
+            }
+
+            function showRoute(currentScene) {
+                const routeContainer = document.getElementById("route-container");
+                const route = findRoute("Entrada", currentScene); // Ruta desde la Entrada hasta la escena actual
+
+                if (route) {
+                    // Mostrar todas las ubicaciones
+                    routeContainer.innerHTML = route.map(scene => `<span>${scene}</span>`).join('<span>→</span>');
+
+                    routeContainer.style.display = 'flex';
+                    routeContainer.classList.add('fade-in');
+                    setTimeout(() => {
+                        routeContainer.classList.remove('fade-in');
+                    }, 500);
+
+                    // Actualizar las ubicaciones visibles al mostrar la ruta
+                    updateVisibleLocations();
+                } else {
+                    routeContainer.innerHTML = '<span>Ruta no encontrada.</span>';
+                    routeContainer.style.display = 'flex';
+                    routeContainer.classList.add('fade-in');
+                    setTimeout(() => {
+                        routeContainer.classList.remove('fade-in');
+                    }, 500);
+                }
+            }
+
+            // Función para ocultar la ruta después de un tiempo
+            function hideRoute() {
+                const routeContainer = document.getElementById("route-container");
+                routeContainer.classList.add('fade-out');
+                setTimeout(() => {
+                    routeContainer.style.display = 'none';
+                    routeContainer.classList.remove('fade-out');
+                }, 500);
+            }
+
+            // Ejemplo de uso: mostrar la ruta de 'Entrada' a 'Stic'
+            showRoute("Entrada", "Stic");
+
+            function searchLocation() {
+                const searchInput = document.getElementById("search-input");
+                const searchValue = searchInput.value.toLowerCase(); // Convertir el valor de búsqueda a minúsculas
+                const sceneNames = Object.keys(scenes);
+                const foundScene = sceneNames.find(scene => scene.toLowerCase().includes(searchValue)); // Convertir los nombres de las escenas a minúsculas para la comparación
+
+                if (foundScene) {
+                    const currentScene = getCurrentScene(); // Implementa esta función para obtener la escena actual
+                    showRoute(currentScene, foundScene);
+                    loadScene(foundScene);
+                    searchInput.value = ""; // Limpiar el campo de Entrada después de la búsqueda
+
+                    // Trackear la búsqueda exitosa
+                    trackEvent('search-success', { query: searchValue, foundScene: foundScene });
+                } else {
+                    alert("Ubicación no encontrada.");
+
+                    // Trackear la búsqueda fallida
+                    trackEvent('search-fail', { query: searchValue });
+                }
+            }
+
+            // Función para obtener la escena actual (implementa según tu lógica)
+            function getCurrentScene() {
+                // Lógica para obtener la escena actual
+                return "Entrada"; // Ejemplo
+            }
+
+            // Función para crear un marcador en el mapa
+            function createMarker(sceneName, position) {
+                const marker = document.createElement('div');
+                marker.className = 'map-marker';
+                marker.style.left = `${position.x}px`;
+                marker.style.top = `${position.y}px`;
+                marker.addEventListener('click', () => {
+                    loadScene(sceneName);
+                    hideMap();
+                });
+                mapContainer.appendChild(marker);
+            }
+
+            // Zoom con ruedita del mouse
+            document.addEventListener("wheel", (event) => {
+                let fov = parseFloat(cameraEl.getAttribute("fov"));
+                fov += event.deltaY * 0.05; // Ajustar sensibilidad
+                fov = Math.max(30, Math.min(120, fov)); // Limitar zoom entre 30 y 120
+                cameraEl.setAttribute("fov", fov);
+            });
+
+            // Zoom con dedos (pellizcar)
+            let initialDistance = null;
+
+            document.addEventListener("touchmove", (event) => {
+                if (event.touches.length === 2) {
+                    const [touch1, touch2] = event.touches;
+                    const dx = touch1.clientX - touch2.clientX;
+                    const dy = touch1.clientY - touch2.clientY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (initialDistance === null) {
+                        initialDistance = distance;
+                    }
+
+                    const delta = (distance - initialDistance) * 0.05;
+                    let fov = parseFloat(cameraEl.getAttribute("fov"));
+                    fov -= delta;
+                    fov = Math.max(30, Math.min(120, fov)); // Limitar zoom entre 30 y 120
+                    cameraEl.setAttribute("fov", fov);
+                    initialDistance = distance;
+                }
+            });
+
+            document.addEventListener("touchend", () => {
+                initialDistance = null;
+            });
+
+            // Función para mostrar el modal de ayuda
+            function showHelp() {
+                document.getElementById("help-modal").style.display = "block";
+            }
+
+            function closeHelp() {
+                document.getElementById("help-modal").style.display = "none";
+            }
+
+            // Cerrar el modal cuando el usuario haga clic fuera del contenido del modal
+            window.onclick = function(event) {
+                const modal = document.getElementById("help-modal");
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        </script>
+    </body>
+</html>
