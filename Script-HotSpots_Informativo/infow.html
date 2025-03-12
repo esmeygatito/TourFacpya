@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotspot Interactivo</title>
+    <!-- Incluye la biblioteca A-Frame -->
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <style>
+        /* Estilos básicos para el cuerpo */
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Estilos para la caja de información */
+        #info-box {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background-color: white;
+            box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
+            transition: right 0.5s ease-in-out;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        /* Estilos para el título de la caja de información */
+        #info-box h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        /* Estilos para la imagen dentro de la caja de información */
+        #info-box img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        /* Estilos para el botón de cerrar */
+        #close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Estilos para los elementos clicables */
+        .clickable {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Escena de A-Frame -->
+<a-scene cursor="rayOrigin: mouse">
+    <!-- Imagen de fondo 360 -->
+    <a-sky src="1.webp" rotation="0 -130 0"></a-sky>
+
+    <!-- Hotspot visible -->
+    <a-image 
+        src="infoicon.png"
+        position="0 1.5 -3"
+        scale="0.5 0.5 0.5"
+        class="clickable"
+        id="hotspot"
+        gesture-handler>
+    </a-image>
+</a-scene>
+
+<!-- Ventana de información -->
+<div id="info-box">
+    <!-- Botón de cerrar -->
+    <button id="close-btn" onclick="closeInfo()">✖</button>
+    <h2>Información del Lugar</h2>
+    <img src="1.webp" alt="Imagen del lugar">
+    <p>Esta es la información detallada sobre este punto. Puedes agregar cualquier contenido aquí.</p>
+</div>
+
+<script>
+    // Función para abrir la ventana de información
+    function openInfo() {
+        const infoBox = document.getElementById('info-box');
+        infoBox.style.display = 'block';
+        setTimeout(() => {
+            infoBox.style.right = '0';
+        }, 10);
+    }
+
+    // Función para cerrar la ventana de información
+    function closeInfo() {
+        const infoBox = document.getElementById('info-box');
+        infoBox.style.right = '-400px';
+        setTimeout(() => {
+            infoBox.style.display = 'none';
+        }, 500);
+    }
+
+    // Componente de A-Frame para manejar gestos
+    AFRAME.registerComponent('gesture-handler', {
+        init: function () {
+            const hotspot = document.getElementById('hotspot');
+            // Añadir evento de clic al hotspot
+            hotspot.addEventListener('click', () => openInfo());
+
+            // Capturar toques en dispositivos móviles (tap)
+            hotspot.addEventListener('touchstart', (event) => {
+                event.preventDefault();
+                openInfo();
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
