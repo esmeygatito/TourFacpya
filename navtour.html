@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+        <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
         <link rel="icon" href="360images/icons/logo.png" type="image/x-icon">
         <link rel = "stylesheet" type = "text/css" href = "tour.css">
@@ -56,15 +55,10 @@
         <!-- structuring map container -->
         <div id="map-container"></div>
     
-        <a-scene>
+        <<a-scene cursor="rayOrigin: mouse">>
             <a-light type="ambient" intensity="0.5"></a-light>
             <!-- aframe camera -->
             <a-camera id="main-camera" position="0 1.6 0" fov="80">
-                <a-entity cursor="fuse: true; fuseTimeout: 1500"
-                          geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
-                          material="color: #383A3B; shader: phong"
-                          position="0 0 -1">
-                </a-entity>
             </a-camera>
     
             <!-- start image -->
@@ -76,7 +70,25 @@
         </a-scene>
     
         <script>
+            // Activar clics táctiles en dispositivos móviles
+            AFRAME.registerComponent('gesture-handler', {
+                init: function () {
+                    const hotspot = document.getElementById('hotspot');
+                    hotspot.addEventListener('click', () => openInfo());
 
+                    // Capturar toques en móviles (tap)
+                    hotspot.addEventListener('touchstart', (event) => {
+                        event.preventDefault();
+                        openInfo();
+                    });
+                }
+            });
+
+            function openInfo() {
+                // Lógica para abrir la información del hotspot
+                alert("Hotspot clickeado!");
+            }
+            
             let currentScene = "Entrada"; // Variable para mantener la escena actual
             document.addEventListener("DOMContentLoaded", () => {
                 const initialLoading = document.getElementById("initial-loading");
