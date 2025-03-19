@@ -10,11 +10,12 @@
         <title>DEVEETOUR</title>
     </head>
     <body>
-        <!-- initial loading screen animation-->
+
+        <!-- initial loading screen animation -->
         <div id="initial-loading">
             <h2>Cargando...</h2>
         </div>
-    
+
         <!-- structuring loading screen -->
         <div id="loading-screen">
             <img id="loading-logo" src="360images/icons/logo.png" alt="Logo DEVEESITES" loading="lazy">
@@ -23,10 +24,10 @@
             <button class="glass-button" onclick="startTour()" aria-label="Iniciar recorrido">Iniciar recorrido</button>
             <button class="glass-button" onclick="goToMain()" aria-label="Volver a la página principal">Volver a la página principal</button>
         </div>
-    
+
         <!-- structuring back to loading screen btn -->
         <div id="back-to-loading" style="display: none;" onclick="returnToLoading()"></div>
-
+ 
         <!-- structuring search bar -->
         <div id="search-container">
             <input type="text" id="search-input" placeholder="¿A dónde irás hoy?">
@@ -44,7 +45,7 @@
                 <p>1. Utiliza los botones para iniciar el recorrido o volver a la página principal.</p>
                 <p>2. Usa la barra de búsqueda para encontrar ubicaciones específicas.</p>
                 <p>3. Desplázate por la barra de rutas para ver las ubicaciones disponibles.</p>
-                <p>4. Apunta con el cursor a los hotspots para navegar entre escenas.</p>
+                <p>4. Presiona los hotspots para navegar entre escenas.</p>
                 <p>¡Disfruta del recorrido virtual!</p>
             </div>
         </div>
@@ -54,41 +55,126 @@
 
         <!-- structuring map container -->
         <div id="map-container"></div>
-    
+
+        <!-- Modal para previsualización de imágenes -->
+        <div id="image-preview-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeImagePreview()">&times;</span>
+                <img id="preview-image" src="" alt="Previsualización" style="width: 100%; height: auto; border-radius: 10px;">
+            </div>
+        </div>
+
+        <!-- Ventana de información -->
+        <div id="info-box" style="display: none; position: fixed; right: -400px; top: 10%; width: 90%; max-width: 350px; max-height: 80%; background: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 20px; overflow-y: auto; transition: right 0.5s ease; z-index: 1000; font-family: 'Montserrat', sans-serif;">
+            <!-- Botón de cerrar -->
+            <button id="close-btn" onclick="closeInfo()" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 20px; cursor: pointer;">✖</button>
+            <h2 id="info-title">Información del Lugar</h2>
+            <img id="info-image" src="" alt="Imagen del lugar" style="width: 100%; height: auto; margin-top: 10px; cursor: pointer;" onclick="openImagePreview(this.src)">
+            <p id="info-description">Esta es la información detallada sobre este punto. Puedes agregar cualquier contenido aquí.</p>
+            <p id="info-contact"></p>
+            <!-- Contenedor para el carrusel de imágenes -->
+            <div id="carousel-container" style="display: flex; overflow-x: auto; gap: 10px; margin-top: 10px;">
+                <!-- Las imágenes del carrusel se agregarán dinámicamente aquí -->
+            </div>
+        </div>
+
         <<a-scene cursor="rayOrigin: mouse">>
             <a-light type="ambient" intensity="0.5"></a-light>
             <!-- aframe camera -->
             <a-camera id="main-camera" position="0 1.6 0" fov="80">
             </a-camera>
-    
+
             <!-- start image -->
             <a-sky id="panorama" src="360images/Entrada/1.webp"></a-sky>
-    
+
             <!-- hotspots container -->
             <a-entity id="hotspot-container"></a-entity>
 
         </a-scene>
-    
+
         <script>
-            // Activar clics táctiles en dispositivos móviles
+            // Componente de A-Frame para manejar gestos en los hotspots
             AFRAME.registerComponent('gesture-handler', {
                 init: function () {
-                    const hotspot = document.getElementById('hotspot');
-                    hotspot.addEventListener('click', () => openInfo());
+                    const sceneName = this.el.getAttribute('data-scene'); // Obtener el nombre de la escena del atributo
+                    this.el.addEventListener('click', () => openInfo(sceneName));
 
-                    // Capturar toques en móviles (tap)
-                    hotspot.addEventListener('touchstart', (event) => {
+                    // Capturar toques en dispositivos móviles (tap)
+                    this.el.addEventListener('touchstart', (event) => {
                         event.preventDefault();
-                        openInfo();
+                        openInfo(sceneName);
                     });
                 }
             });
 
-            function openInfo() {
-                // Lógica para abrir la información del hotspot
-                alert("Hotspot clickeado!");
+            // Función para abrir la ventana de información
+            function openInfo(departamento) {
+                const infoBox = document.getElementById('info-box');
+                const infoTitle = document.getElementById('info-title');
+                const infoImage = document.getElementById('info-image');
+                const infoDescription = document.getElementById('info-description');
+                const infoContact = document.getElementById('info-contact');
+                const carouselContainer = document.getElementById('carousel-container'); // Contenedor para el carrusel de imágenes
+
+                // Obtener la información del departamento
+                const info = departamentos[departamento];
+                if (info) {
+                    // Actualizar los elementos de la ventana con la información del departamento
+                    infoTitle.textContent = info.titulo;
+                    infoImage.src = info.imagenesVentana[0]; // Mostrar la primera imagen como principal
+                    infoDescription.textContent = info.descripcion;
+                    infoContact.textContent = info.contacto;
+
+                    // Limpiar el carrusel y agregar las nuevas imágenes
+                    carouselContainer.innerHTML = '';
+                    info.imagenesVentana.forEach((imgSrc) => {
+                        const carouselImage = document.createElement('img');
+                        carouselImage.src = imgSrc;
+                        carouselImage.alt = "Imagen del carrusel";
+                        carouselImage.style.cursor = "pointer";
+                        carouselImage.onclick = () => (infoImage.src = imgSrc); // Cambiar la imagen principal al hacer clic
+                        carouselContainer.appendChild(carouselImage);
+                    });
+
+                    // Mostrar la ventana de información
+                    infoBox.style.display = 'block';
+                    setTimeout(() => {
+                        infoBox.style.right = '0';
+                    }, 10);
+                }
             }
-            
+
+            // Función para cerrar la ventana de información
+            function closeInfo() {
+                const infoBox = document.getElementById('info-box');
+                infoBox.style.right = '-400px';
+                setTimeout(() => {
+                    infoBox.style.display = 'none';
+                }, 500);
+            }
+
+            // Función para abrir el modal de previsualización de imágenes
+            function openImagePreview(imageSrc) {
+                const modal = document.getElementById('image-preview-modal');
+                const previewImage = document.getElementById('preview-image');
+                previewImage.src = imageSrc; // Establecer la imagen seleccionada
+                modal.style.display = 'block'; // Mostrar el modal
+            }
+
+            // Función para cerrar el modal de previsualización de imágenes
+            function closeImagePreview() {
+                const modal = document.getElementById('image-preview-modal');
+                modal.style.display = 'none'; // Ocultar el modal
+            }
+
+            // Cerrar el modal al hacer clic fuera del contenido
+            window.onclick = function(event) {
+                const modal = document.getElementById('image-preview-modal');
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+
             let currentScene = "Entrada"; // Variable para mantener la escena actual
             document.addEventListener("DOMContentLoaded", () => {
                 const initialLoading = document.getElementById("initial-loading");
@@ -245,6 +331,72 @@
             function goToMain() {
                 window.location.href = "https://deveesites.com/"; 
             }
+
+            const departamentos = {
+                "Entrada": {
+                    titulo: "Entrada Principal",
+                    descripcion: "Bienvenido a la entrada principal de FACPyA.",
+                    imagen: "360images/icons/info_icon.png",
+                    contacto: "Teléfono: 123-456-7890",
+                    posicion: "0 1.5 -3", // Ajusta la posición según tu escena
+                    imagenesVentana: ["Statics/Entrada.jpg"] // Imágenes para la ventana
+                },
+                "Lobby": {
+                    titulo: "Lobby Central",
+                    descripcion: "El corazón de FACPyA, donde convergen estudiantes y profesores.",
+                    imagen: "360images/icons/info_icon.png",
+                    contacto: "Email: lobby@facpya.com",
+                    posicion: "0.5 1.3 -2", // Ajusta la posición según tu escena
+                    imagenesVentana: ["Statics/Auditorio.jpg"] // Imágenes para la ventana
+                },
+                "Pasillo":{
+                    titulo: "Pasillo Principal",
+                    descripcion: "Pasillo principal de la facultad.",
+                    imagen: "360images/icons/info_icon.png",
+                    contacto: "Email: pasillo@facpya.com",
+                    posicion: "0 1 -2",
+                    imagenesVentana: ["Statics/Entrada.jpg"] // Imágenes para la ventana
+                },
+                "Intercambio":{
+                    titulo: "Departamento de Intercambio",
+                    descripcion: "Departamento de intercambio estudiantil.",
+                    imagen: "360images/icons/info_icon.png",
+                    contacto: "Email: intercambio@facpya.com",
+                    posicion: "0 1 -1", // Ajusta la posición según tu escena
+                    rotation: "0 0 0",
+                    imagenesVentana: ["Statics/Intercambio.jpg"] // Imágenes para la ventana
+                },
+                "Titulación":{
+                    titulo: "Departamento de Titulación",
+                    descripcion: "Departamento de titulación.",
+                    imagen: "360images/icons/info_icon.png",
+                    contacto: "Email: titulacion@facpya.com",
+                    posicion: "0 1 -1", // Ajusta la posición según tu escena
+                    rotation: "0 0 0",
+                    imagenesVentana: ["Statics/Titulacion.jpg"] // Imágenes para la ventana
+                },
+                "Biblioteca":{
+                    titulo: "Biblioteca",
+                    descripcion: "Biblioteca de la facultad.",
+                    imagen: "360images/icons/info_icon.png",
+                    contacto: "Email: biblioteca@facpya.com",
+                    posicion: "0 1 -1", // Ajusta la posición según tu escena
+                    rotation: "0 0 0",
+                    imagenesVentana: ["Statics/Biblioteca.jpg"] // Imágenes para la ventana
+                },
+                "Stic":{
+                    titulo: "Centro de Cómputo STIC",
+                    descripcion: "Centro de cómputo de la facultad.",
+                    imagen: "360images/icons/info_icon.png",
+                    contacto: "Email: stic@facpya.com",
+                    posicion: "0 1 -1", // Ajusta la posición según tu escena
+                    rotation: "0 0 0",
+                    imagenesVentana: ["Statics/Stic.jpg"] // Imágenes para la ventana
+                }
+                // ... Agrega más departamentos con sus posiciones ...
+            };
+        
+
             // Definir escenas con sus respectivos hotspots
             const scenes = {
                 Entrada: {
@@ -257,7 +409,8 @@
                             material: "src: 360images/icons/iconup.png; transparent: true",
                             rotation: "-90 90 0.5",
                         }
-                    ]
+                    ],
+                    name: "Entrada",
                 },
                 Lobby: {
                     image: "360images/Lobby/2.webp",
@@ -276,7 +429,8 @@
                             material: "src: 360images/icons/icondown.png; transparent: true", // Personalización
                             rotation: "-90 90 0", // Personalización
                         }
-                    ]
+                    ],
+                    name: "Lobby",
                 },
                 Pasillo: {
                     image: "360images/Pasillo_principal/3.webp",
@@ -295,7 +449,8 @@
                             material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
                             rotation: "-90 90 90", // Personalización
                         }
-                    ]
+                    ],
+                    name: "Pasillo",
                 },
                 Intercambio: {
                     image: "360images/Intercambio/4.webp",
@@ -314,7 +469,8 @@
                             material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
                             rotation: "-90 90 -90", // Personalización
                         }
-                    ]
+                    ],
+                    name: "Intercambio",
                 },
                 Titulación: {
                     image: "360images/Titulacion/5.webp",
@@ -333,7 +489,8 @@
                             material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
                             rotation: "-90 90 -90", // Personalización
                         }           
-                    ]
+                    ],
+                    name: "Titulación",
                 },
                 Biblioteca: {
                     image: "360images/Biblioteca/6.webp",
@@ -352,10 +509,11 @@
                             material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
                             rotation: "-90 90 -90", // Personalización
                         }
-                    ]
+                    ],
+                    name: "Biblioteca",
                 },
                 Stic: {
-                    image: "360images/cp_Stic/7.webp",
+                    image: "360images/cp_stic/7.webp",
                     hotspots: [
                         {
                             position: "-0.3 1 1",
@@ -371,7 +529,8 @@
                             material: "src: 360images/icons/iconup.png; transparent: true", // Personalización
                             rotation: "-90 90 -90", // Personalización
                         }
-                    ]
+                    ],
+                    name: "Stic",
                 },
             };
 
@@ -418,9 +577,9 @@
                 // Mostrar la ruta actualizada
                 showRoute(currentScene);
             }
-
+            //  
             function updateHotspots(scene) {
-                // Clear existing hotspots
+                // Limpiar los hotspots existentes
                 while (hotspotContainer.firstChild) {
                     hotspotContainer.removeChild(hotspotContainer.firstChild);
                 }
@@ -469,6 +628,26 @@
 
                     hotspotContainer.appendChild(hotspotEl);
                     });
+
+                    // Hotspots informativos
+                    for (const departamento in departamentos) {
+                        if (departamentos.hasOwnProperty(departamento)) {
+                            const info = departamentos[departamento];
+                            const posicion = info.posicion;
+                        
+                            // Verifica si el departamento debe mostrarse en la escena actual
+                            if (scene.name === departamento) {
+                                const infoHotspot = document.createElement("a-image");
+                                infoHotspot.setAttribute("src", "360images/icons/info_icon.png"); // Asegúrate de tener este icono
+                                infoHotspot.setAttribute("position", posicion);
+                                infoHotspot.setAttribute("scale", "0.5 0.5 0.5");
+                                infoHotspot.setAttribute("class", "clickable");
+                                infoHotspot.setAttribute("data-scene", departamento); // Asigna el nombre del departamento
+                                infoHotspot.setAttribute("gesture-handler", "");
+                                hotspotContainer.appendChild(infoHotspot);
+                            }
+                        }
+                    }
                 }
 
             // Cargar la escena inicial
@@ -619,6 +798,8 @@
                 mapContainer.appendChild(marker);
             }
 
+            
+
             // Zoom con ruedita del mouse
             document.addEventListener("wheel", (event) => {
                 let fov = parseFloat(cameraEl.getAttribute("fov"));
@@ -656,9 +837,9 @@
 
             // Función para mostrar el modal de ayuda
             function showHelp() {
-                document.getElementById("help-modal").style.display = "block";
+                document.getElementById("help-modal").style.display = "flex";
             }
-
+            
             function closeHelp() {
                 document.getElementById("help-modal").style.display = "none";
             }
