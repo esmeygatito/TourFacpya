@@ -563,3 +563,476 @@ body, html {
     width: 2px;
     background: blue;
 }
+
+/* Modal para previsualización de imágenes */
+#image-preview-modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 3000; /* Por encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro semitransparente */
+}
+
+#image-preview-modal .modal-content {
+    margin: 10% auto; /* Centrado vertical y horizontal */
+    padding: 20px;
+    width: 80%;
+    max-width: 600px; /* Ancho máximo */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 3001; /* Asegúrate de que el contenido del modal esté por encima del fondo */
+}
+
+#image-preview-modal .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 3002; /* Asegúrate de que el botón de cerrar esté por encima del contenido */
+}
+
+#image-preview-modal .close:hover,
+#image-preview-modal .close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Ajustar el z-index de los elementos que se superponen */
+#back-to-loading, #help-button, #route-container, #search-container {
+    z-index: 1000; /* Asegúrate de que estos elementos tengan un z-index menor que el modal */
+}
+
+/* Estilo mejorado de glassmorphism para la ventana de información */
+#info-box {
+    display: none;
+    position: fixed;
+    right: -400px;
+    top: 10%;
+    width: 90%;
+    max-width: 350px;
+    max-height: 80%;
+    background: rgba(255, 255, 255, 0.15); /* Fondo semitransparente */
+    backdrop-filter: blur(15px) saturate(180%); /* Efecto de desenfoque y saturación */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); /* Sombra más pronunciada */
+    border-radius: 15px; /* Bordes más redondeados */
+    padding: 20px;
+    overflow-y: auto;
+    transition: right 0.5s ease, opacity 0.3s ease; /* Transición suave */
+    z-index: 1000;
+    font-family: 'Montserrat', sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Borde sutil */
+    opacity: 0.95; /* Ligera opacidad */
+}
+
+/* Ajustes para el botón de cerrar */
+#close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #555; /* Color del botón */
+    border-radius: 50%; /* Botón redondeado */
+    padding: 5px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#close-btn:hover {
+    background: rgba(255, 255, 255, 0.4); /* Fondo más claro al pasar el cursor */
+    color: #000; /* Cambiar color al pasar el cursor */
+}
+
+/* Títulos y texto dentro de la ventana */
+#info-box h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Sombra para el texto */
+}
+
+#info-box p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+/* Imágenes dentro de la ventana */
+#info-box img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para las imágenes */
+    transition: transform 0.3s ease;
+}
+
+#info-box img:hover {
+    transform: scale(1.05); /* Efecto de zoom al pasar el cursor */
+}
+
+/* Carrusel de imágenes */
+#carousel-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#carousel-container img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    object-fit: cover;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+#carousel-container img:hover {
+    border-color: #862588; /* Color del borde al pasar el cursor */
+    transform: scale(1.1); /* Efecto de zoom */
+}
+
+/* Estilo mejorado para el modal de ayuda */
+#help-modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 3000; /* Por encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo más oscuro para mayor contraste */
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#help-modal .modal-content {
+    background: rgba(255, 255, 255, 0.25); /* Fondo semitransparente */
+    backdrop-filter: blur(15px) saturate(180%); /* Efecto de desenfoque y saturación */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada */
+    border-radius: 15px; /* Bordes redondeados */
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    color: #F7F7F7; /* Texto claro para mayor contraste */
+    font-family: 'Montserrat', sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Borde más visible */
+    animation: fadeIn 0.5s ease-in-out; /* Animación de entrada */
+}
+
+#help-modal .modal-content h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #FFFFFF; /* Título blanco para mayor contraste */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada para destacar */
+}
+
+#help-modal .modal-content p {
+    font-size: 1rem;
+    color: #E0E0E0; /* Texto gris claro para mejor contraste */
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+/* Botón de cerrar */
+#help-modal .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.3); /* Fondo semitransparente */
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #FFFFFF; /* Botón blanco para mayor contraste */
+    border-radius: 50%;
+    padding: 5px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#help-modal .close:hover {
+    background: rgba(255, 255, 255, 0.5); /* Fondo más claro al pasar el cursor */
+    color: #000; /* Cambiar color al pasar el cursor */
+}
+
+/* Contenedor del menú */
+#dropdown-menu-container {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+/* Botón principal del menú */
+#menu-button {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Lista del menú desplegable */
+#dropdown-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: none;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 200px;
+}
+
+/* Elementos del menú */
+#dropdown-menu li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#dropdown-menu li:last-child {
+    border-bottom: none;
+}
+
+/* Botones del menú */
+#dropdown-menu button {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+#dropdown-menu button:hover {
+    background: #f0f0f0;
+}
+
+/* Submenús */
+#dropdown-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+    background: #f9f9f9;
+    border-left: 2px solid #ccc;
+}
+
+#dropdown-menu ul li {
+    padding: 5px 10px;
+}
+
+/* Mostrar elementos */
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    #dropdown-menu-container {
+        top: 5px;
+        left: 5px;
+    }
+
+    #menu-button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    #dropdown-menu {
+        width: 150px;
+    }
+
+    #dropdown-menu button {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    #dropdown-menu ul li {
+        padding: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    #dropdown-menu-container {
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    #menu-button {
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    #dropdown-menu {
+        width: 100%;
+        position: static;
+        border: none;
+        box-shadow: none;
+    }
+
+    #dropdown-menu li {
+        border-bottom: 1px solid #ccc;
+    }
+
+    #dropdown-menu ul {
+        border-left: none;
+    }
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 480px) {
+    #help-modal .modal-content {
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+
+    #help-modal .modal-content h2 {
+        font-size: 1.2rem;
+    }
+
+    #help-modal .modal-content p {
+        font-size: 0.8rem;
+    }
+}
+
+/* Ajustes adicionales para responsividad */
+
+/* Ventana de información */
+@media (max-width: 480px) {
+    #info-box {
+        top: 5%;
+        right: 0;
+        width: 95%;
+        max-width: none;
+        max-height: 90%;
+        padding: 10px;
+        font-size: 0.8rem;
+    }
+
+    #info-box h2 {
+        font-size: 1.2rem;
+    }
+
+    #info-box p {
+        font-size: 0.8rem;
+    }
+
+    #carousel-container img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Mapa */
+@media (max-width: 768px) {
+    #map-container {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    #map-container {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+/* Hotspots */
+@media (max-width: 768px) {
+    a-entity[geometry] {
+        scale: 0.8 0.8 0.8;
+    }
+}
+
+@media (max-width: 480px) {
+    a-entity[geometry] {
+        scale: 0.6 0.6 0.6;
+    }
+}
+
+/* Barra de búsqueda */
+@media (max-width: 480px) {
+    #search-container {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    #search-input {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    #search-button {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+}
+
+/* Pantalla de carga */
+@media (max-width: 480px) {
+    #loading-screen h2 {
+        font-size: 1.25rem;
+    }
+
+    #loading-screen h1 {
+        font-size: 1rem;
+    }
+
+    .glass-button {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Responsividad para pantallas pequeñas help-modal */
+@media (max-width: 480px) {
+    #help-modal .modal-content {
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+
+    #help-modal .modal-content h2 {
+        font-size: 1.2rem;
+    }
+
+    #help-modal .modal-content p {
+        font-size: 0.8rem;
+    }
+}
