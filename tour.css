@@ -859,59 +859,85 @@ body, html {
     display: block;
 }
 
-/* Responsividad */
-@media (max-width: 768px) {
-    #dropdown-menu-container {
-        top: 5px;
-        left: 5px;
-    }
-
-    #menu-button {
-        font-size: 14px;
-        padding: 8px 16px;
-    }
-
-    #dropdown-menu {
-        width: 150px;
-    }
-
-    #dropdown-menu button {
-        font-size: 12px;
-        padding: 8px;
-    }
-
-    #dropdown-menu ul li {
-        padding: 5px;
-    }
+/* Contenedor del menú desplegable */
+#dropdown-menu-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    font-family: 'Montserrat', sans-serif;
 }
 
-@media (max-width: 480px) {
-    #dropdown-menu-container {
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
+/* Botón del menú desplegable */
+#dropdown-button {
+    background: rgba(255, 255, 255, 0.2); /* Glassmorphism */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 20px;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
 
-    #menu-button {
-        width: 100%;
-        text-align: center;
-        font-size: 14px;
-        padding: 10px;
-    }
+/* Hover y animación del botón */
+#dropdown-button:hover {
+    background: linear-gradient(135deg, #862588, #b232b5); /* Morado */
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
 
-    #dropdown-menu {
-        width: 100%;
-        position: static;
-        border: none;
-        box-shadow: none;
-    }
+/* Menú desplegable */
+#dropdown-menu {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background: rgba(255, 255, 255, 0.2); /* Glassmorphism */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
 
-    #dropdown-menu li {
-        border-bottom: 1px solid #ccc;
-    }
+/* Opciones del menú */
+#dropdown-menu button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    text-align: left;
+    padding: 10px 15px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
 
-    #dropdown-menu ul {
-        border-left: none;
+/* Hover en las opciones */
+#dropdown-menu button:hover {
+    background: linear-gradient(135deg, #862588, #b232b5); /* Morado */
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
