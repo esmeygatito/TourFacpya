@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+        <script src="rec_facial.js"></script>
         <link rel="icon" href="360images/icons/logo.png" type="image/x-icon">
         <link rel = "stylesheet" type = "text/css" href = "tour.css">
         <title>DEVEETOUR</title>
@@ -28,10 +29,12 @@
         <!-- structuring back to loading screen btn -->
         <div id="back-to-loading" style="display: none;" onclick="returnToLoading()"></div>
  
-        <!-- structuring search bar -->
-        <div id="search-container">
-            <input type="text" id="search-input" placeholder="¿A dónde irás hoy?">
-            <button id="search-button" onclick="searchLocation()">Buscar</button>
+        <!-- Menú desplegable minimalista -->
+        <div id="dropdown-menu-container">
+            <button id="dropdown-button" onclick="toggleDropdownMenu()">Seleccionar Ubicación</button>
+            <div id="dropdown-menu" style="display: none;">
+                <!-- Las opciones del menú se generarán dinámicamente -->
+            </div>
         </div>
 
         <!-- Botón de ayuda -->
@@ -203,7 +206,7 @@
                 const backBtn = document.getElementById("back-to-loading");
                 const scene = document.querySelector("a-scene");
                 const routeContainer = document.getElementById("route-container");
-                const searchContainer = document.getElementById("search-container"); // Obtener el contenedor de búsqueda
+                
 
                 loadingScreen.style.display = "none"; // Ocultar la pantalla de carga
                 scene.style.display = "block"; // Mostrar la escena
@@ -226,7 +229,7 @@
                 const scene = document.querySelector("a-scene");
                 const backBtn = document.getElementById("back-to-loading");
                 const routeContainer = document.getElementById("route-container");
-                const searchContainer = document.getElementById("search-container");
+                
 
                 // Mostrar la pantalla de carga con efecto de desenfoque
                 loadingScreen.style.display = "flex";
@@ -326,6 +329,31 @@
                 routeContainer.style.display = "flex";
                 showRoute(currentScene); // Mostrar la ruta actual
             }
+
+            // Función para alternar la visibilidad del menú desplegable
+            function toggleDropdownMenu() {
+                const dropdownMenu = document.getElementById("dropdown-menu");
+                dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
+            }
+
+            // Función para generar las opciones del menú desplegable
+            function populateDropdownMenu() {
+                const dropdownMenu = document.getElementById("dropdown-menu");
+                dropdownMenu.innerHTML = ""; // Limpiar el menú antes de agregar opciones
+
+                Object.keys(scenes).forEach(sceneName => {
+                    const button = document.createElement("button");
+                    button.textContent = scenes[sceneName].name || sceneName; // Mostrar el nombre de la escena
+                    button.onclick = () => {
+                        loadScene(sceneName); // Cargar la escena seleccionada
+                        toggleDropdownMenu(); // Cerrar el menú después de seleccionar
+                    };
+                    dropdownMenu.appendChild(button);
+                });
+            }
+
+            // Llamar a la función para generar el menú al cargar la página
+            document.addEventListener("DOMContentLoaded", populateDropdownMenu);
 
             // Función para volver a la página principal
             function goToMain() {
@@ -538,45 +566,42 @@
             const hotspotContainer = document.getElementById("hotspot-container");
             const cameraEl = document.getElementById("main-camera");
             
-            // Función para cargar una escena
             function loadScene(sceneName) {
+                // Cerrar la ventana informativa si está abierta
+                closeInfo();
+            
                 const scene = scenes[sceneName];
                 if (!scene) {
                     console.error(`Escena "${sceneName}" no encontrada.`);
                     return;
                 }
-
+            
                 // Actualizar la escena actual
                 currentScene = sceneName;
-
+            
                 // Añadir clase fade para la transición
                 panorama.classList.add('fade');
                 console.log('Clase fade añadida');
-
+            
                 // Cambiar la imagen del panorama después de un pequeño retraso para permitir la animación
                 setTimeout(() => {
                     panorama.setAttribute("src", scene.image);
                     console.log('Imagen cambiada');
-
-                    //se ocupa quitar la clase fade despues de que la imagen cambie :D
-                    panorama.addEventListener('load',() => {
+            
+                    // Quitar la clase fade después de que la imagen cambie
+                    panorama.addEventListener('load', () => {
                         panorama.classList.remove('fade');
                         console.log('Clase fade eliminada');
-                    }, {once: true});
+                    }, { once: true });
                 }, 750); // Ajusta el tiempo según sea necesario
-
-                // Eliminar la clase fade después de la animación
-                // setTimeout(() => {
-                //     panorama.classList.remove('fade');
-                //     console.log('Clase fade eliminada');
-                // }, 2500); // Ajusta el tiempo según sea necesario
-
-                //se creo la funcion updateHotSpots lml
+            
+                // Actualizar los hotspots
                 updateHotspots(scene);
-
+            
                 // Mostrar la ruta actualizada
                 showRoute(currentScene);
             }
+
             //  
             function updateHotspots(scene) {
                 // Limpiar los hotspots existentes
