@@ -611,103 +611,6 @@ body, html {
     z-index: 1000; /* Asegúrate de que estos elementos tengan un z-index menor que el modal */
 }
 
-/* Estilo mejorado de glassmorphism para la ventana de información */
-#info-box {
-    display: none;
-    position: fixed;
-    right: -400px;
-    top: 10%;
-    width: 90%;
-    max-width: 350px;
-    max-height: 80%;
-    background: rgba(255, 255, 255, 0.15); /* Fondo semitransparente */
-    backdrop-filter: blur(15px) saturate(180%); /* Efecto de desenfoque y saturación */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); /* Sombra más pronunciada */
-    border-radius: 15px; /* Bordes más redondeados */
-    padding: 20px;
-    overflow-y: auto;
-    transition: right 0.5s ease, opacity 0.3s ease; /* Transición suave */
-    z-index: 1000;
-    font-family: 'Montserrat', sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Borde sutil */
-    opacity: 0.95; /* Ligera opacidad */
-}
-
-/* Ajustes para el botón de cerrar */
-#close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #555; /* Color del botón */
-    border-radius: 50%; /* Botón redondeado */
-    padding: 5px;
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
-#close-btn:hover {
-    background: rgba(255, 255, 255, 0.4); /* Fondo más claro al pasar el cursor */
-    color: #000; /* Cambiar color al pasar el cursor */
-}
-
-/* Títulos y texto dentro de la ventana */
-#info-box h2 {
-    font-size: 1.5rem;
-    text-align: center;
-    font-weight: bold;
-    margin: 0;
-    color: #333;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Sombra para el texto */
-}
-
-#info-box p {
-    font-size: 0.9rem;
-    color: #555;
-    margin: 5px 0;
-    line-height: 1.5;
-}
-
-/* Imágenes dentro de la ventana */
-#info-box img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    margin-top: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para las imágenes */
-    transition: transform 0.3s ease;
-}
-
-#info-box img:hover {
-    transform: scale(1.05); /* Efecto de zoom al pasar el cursor */
-}
-
-/* Carrusel de imágenes */
-#carousel-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-#carousel-container img {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    cursor: pointer;
-    object-fit: cover;
-    border: 2px solid transparent;
-    transition: border-color 0.3s ease, transform 0.3s ease;
-}
-
-#carousel-container img:hover {
-    border-color: #862588; /* Color del borde al pasar el cursor */
-    transform: scale(1.1); /* Efecto de zoom */
-}
-
 /* Estilo mejorado para el modal de ayuda */
 #help-modal {
     display: none; /* Oculto por defecto */
@@ -959,32 +862,6 @@ body, html {
 
 /* Ajustes adicionales para responsividad */
 
-/* Ventana de información */
-@media (max-width: 480px) {
-    #info-box {
-        top: 5%;
-        right: 0;
-        width: 95%;
-        max-width: none;
-        max-height: 90%;
-        padding: 10px;
-        font-size: 0.8rem;
-    }
-
-    #info-box h2 {
-        font-size: 1.2rem;
-    }
-
-    #info-box p {
-        font-size: 0.8rem;
-    }
-
-    #carousel-container img {
-        width: 50px;
-        height: 50px;
-    }
-}
-
 /* Mapa */
 @media (max-width: 768px) {
     #map-container {
@@ -1047,18 +924,286 @@ body, html {
     }
 }
 
-/* Responsividad para pantallas pequeñas help-modal */
+/* ventana de info, generales */
+#info-box {
+    display: none;
+    position: fixed;
+    right: 20px;
+    top: 5%;
+    width: 350px;
+    max-height: 85%;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    overflow-y: auto;
+    transition: transform 0.4s ease, opacity 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    opacity: 0.9;
+    margin-right: 10%;
+    z-index: 1000;
+}
+
+/* header con el boton de close */
+#info-box-header {
+    width: calc(100% + 25px);
+    margin: -25px -25px 0 -25px;
+    background: #862588;
+    color: white;
+    padding: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Botón de cerrar modernizado */
+#close-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: white;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    margin-left: auto;
+    padding-right: 10px;
+}
+
+#close-btn:hover {
+    color: black;
+}
+
+/* main content */
+#info-box-content {
+    padding: 25px;
+}
+
+#dept-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a4a4a;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#info-box-time {
+    font-size: 1rem;
+    color: #383A3B;
+    font-style: italic;
+    margin-top: 2.5px;
+    margin-bottom: 10px;
+}
+
+/* main image */
+#info-box img.main-img {
+    width: 50%;
+    height: auto;
+    border-radius: 10px;
+    margin-top: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* contacto e info */
+#info-box .contact-info {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* enlaces */
+#info-box .contact-info a {
+    text-decoration: none;
+    color: #862588;
+    font-weight: bold;
+}
+
+#info-box .contact-info a:hover {
+    text-decoration: underline;
+}
+
+/* miniaturas */
+#image-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+}
+
+#info-image {
+    flex: 1;
+    max-width: 80%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#thumbnail-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 0.3;
+    max-width: 80px;
+    overflow: hidden;
+}
+
+.thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.thumbnail:hover {
+    transform: scale(1.1);
+}
+
+.more-thumbnails {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+}
+
+/* para que no se desborden mis fotitos */
+#info-box-content {
+    overflow: hidden;
+}
+
+/* modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 80%;
+    max-height: 80%;
+    overflow: auto;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
+.gallery-img {
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.gallery-img:hover {
+    transform: scale(1.1);
+}
+
+#full-screen-modal {
+    display: none;
+    position: fixed;
+    z-index: 1100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+}
+
+.full-screen-img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+#full-screen-modal .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+}
+
+/* k sea responsivo tmb */
+@media (max-width: 768px) {
+    #info-box {
+        width: 90%;
+        right: 5%;
+        max-height: 75%;
+    }
+
+    #info-image {
+        max-width: 100%;
+    }
+
+    #thumbnail-container {
+        flex-direction: row;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .modal-content {
+        max-width: 90%;
+    }
+
+    #full-screen-modal .close {
+        top: 15px;
+        right: 20px;
+    }
+}
+
 @media (max-width: 480px) {
-    #help-modal .modal-content {
-        padding: 15px;
-        font-size: 0.9rem;
+    #image-container {
+        flex-direction: column;
+        align-items: center;
     }
 
-    #help-modal .modal-content h2 {
-        font-size: 1.2rem;
+    #info-image {
+        max-width: 90%;
     }
 
-    #help-modal .modal-content p {
-        font-size: 0.8rem;
+    #thumbnail-container {
+        flex-direction: row;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    #info-box {
+        top: 10%;
+        max-height: 80%;
+        width: 95%;
+        right: 2%;
     }
 }

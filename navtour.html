@@ -67,21 +67,35 @@
             </div>
         </div>
 
-        <!-- Ventana de información -->
-        <div id="info-box" style="display: none; position: fixed; right: -400px; top: 10%; width: 90%; max-width: 350px; max-height: 80%; background: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 20px; overflow-y: auto; transition: right 0.5s ease; z-index: 1000; font-family: 'Montserrat', sans-serif;">
-            <!-- Botón de cerrar -->
-            <button id="close-btn" onclick="closeInfo()" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 20px; cursor: pointer;">✖</button>
-            <h2 id="info-title">Información del Lugar</h2>
-            <img id="info-image" src="" alt="Imagen del lugar" style="width: 100%; height: auto; margin-top: 10px; cursor: pointer;" onclick="openImagePreview(this.src)">
-            <p id="info-description">Esta es la información detallada sobre este punto. Puedes agregar cualquier contenido aquí.</p>
-            <p id="info-contact"></p>
-            <!-- Contenedor para el carrusel de imágenes -->
-            <div id="carousel-container" style="display: flex; overflow-x: auto; gap: 10px; margin-top: 10px;">
-                <!-- Las imágenes del carrusel se agregarán dinámicamente aquí -->
+        <!-- ventana informativa -->
+        <div id="info-box">
+            <div id="info-box-header">
+                <button id="close-btn" onclick="closeInfo()">✖</button>
             </div>
+            <h1 id="dept-name"></h1>
+            <p id="info-box-time"></p>
+            <div id="image-container">
+                <img id="info-image" class="main-img" src="" alt="imagen del lugar" onclick="openImagePreview(this.src)">
+                <div id="thumbnail-container"></div>
+            </div>
+            <p id="info-content"></p>
+            <pre id="info-contact" class="contact-info"></pre>
+            <div id="gallery-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeGallery()">✖</span>
+                    <div id="gallery-content"></div>
+                </div>
+            </div>
+
+            <!--full screen modal-->
+            <div id="full-screen-modal" class="modal">
+                <span class="close" onclick="closeFullScreen()">✖</span>
+                <img id="full-screen-image" class="full-screen-img">
+            </div>
+
         </div>
 
-        <<a-scene cursor="rayOrigin: mouse">>
+        <a-scene cursor="rayOrigin: mouse">
             <a-light type="ambient" intensity="0.5"></a-light>
             <!-- aframe camera -->
             <a-camera id="main-camera" position="0 1.6 0" fov="80">
@@ -110,75 +124,142 @@
                 }
             });
 
-            // Función para abrir la ventana de información
+            // abrir la ventana informativa
             function openInfo(departamento) {
-                const infoBox = document.getElementById('info-box');
-                const infoTitle = document.getElementById('info-title');
-                const infoImage = document.getElementById('info-image');
-                const infoDescription = document.getElementById('info-description');
-                const infoContact = document.getElementById('info-contact');
-                const carouselContainer = document.getElementById('carousel-container'); // Contenedor para el carrusel de imágenes
+            const infoBox = document.getElementById('info-box');
+            const infoTitle = document.getElementById('dept-name');
+            const infoTime = document.getElementById('info-box-time');
+            const mainImage = document.getElementById('info-image');
+            const infoDescription = document.getElementById('info-content');
+            const infoContact = document.getElementById('info-contact');
+            const thumbnailContainer = document.getElementById('thumbnail-container');
 
-                // Obtener la información del departamento
-                const info = departamentos[departamento];
-                if (info) {
-                    // Actualizar los elementos de la ventana con la información del departamento
-                    infoTitle.textContent = info.titulo;
-                    infoImage.src = info.imagenesVentana[0]; // Mostrar la primera imagen como principal
-                    infoDescription.textContent = info.descripcion;
-                    infoContact.textContent = info.contacto;
+            // se obtiene la info de cada dpto
+            const info = departamentos[departamento];
 
-                    // Limpiar el carrusel y agregar las nuevas imágenes
-                    carouselContainer.innerHTML = '';
-                    info.imagenesVentana.forEach((imgSrc) => {
-                        const carouselImage = document.createElement('img');
-                        carouselImage.src = imgSrc;
-                        carouselImage.alt = "Imagen del carrusel";
-                        carouselImage.style.cursor = "pointer";
-                        carouselImage.onclick = () => (infoImage.src = imgSrc); // Cambiar la imagen principal al hacer clic
-                        carouselContainer.appendChild(carouselImage);
-                    });
+            if (info) {
+                // actualizar datos
+                infoTitle.textContent = info.titulo;
+                infoTime.textContent = info.horario;
+                mainImage.src = info.imagenesVentana[0];
+                mainImage.onclick = () => openFullScreen(info.imagenesVentana[0]);
+                infoDescription.textContent = info.descripcion;
+                infoContact.textContent = info.contacto;
 
-                    // Mostrar la ventana de información
-                    infoBox.style.display = 'block';
-                    setTimeout(() => {
-                        infoBox.style.right = '0';
-                    }, 10);
+                thumbnailContainer.innerHTML = '';
+                const maxThumbnails = 2; // mostrar dos miniaturas
+
+                info.imagenesVentana.slice(1, maxThumbnails).forEach((imgSrc) => {
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = imgSrc;
+                    thumbnail.alt = "Miniatura";
+                    thumbnail.classList.add('thumbnail');
+                    thumbnail.onclick = () => openFullScreen(imgSrc); // ampliar imagen al hacer clic
+                    thumbnailContainer.appendChild(thumbnail);
+                });
+
+                // "+x" si hay mas imgs
+                if (info.imagenesVentana.length > maxThumbnails) {
+                    const moreImages = document.createElement("div");
+                    moreImages.classList.add("more-thumbnails");
+                    moreImages.innerText = `+${info.imagenesVentana.length - maxThumbnails}`;
+                    moreImages.onclick = () => openGallery(info.imagenesVentana);
+                    thumbnailContainer.appendChild(moreImages);
                 }
+
+                // mostrar la ventana con block
+                infoBox.style.display = 'block';
+                setTimeout(() => {
+                    infoBox.style.right = '0';
+                }, 10);
+            }
+        }
+
+            // abrir el modal de + imagenes
+            function openGallery(images) {
+            const modal = document.getElementById("gallery-modal");
+            const modalContent = document.getElementById("gallery-content");
+            modalContent.innerHTML = "";
+
+            images.forEach((imgSrc) => {
+                const img = document.createElement("img");
+                img.src = imgSrc;
+                img.classList.add("gallery-img");
+                img.onclick = () => openFullScreen(imgSrc);
+                modalContent.appendChild(img);
+            });
+
+            modal.style.display = "block";
+        }
+
+            // cerrar el modal de la galeria de imagenes
+            function closeGallery() {
+                const modal = document.getElementById("gallery-modal");
+                modal.style.display = "none";
             }
 
-            // Función para cerrar la ventana de información
-            function closeInfo() {
-                const infoBox = document.getElementById('info-box');
-                infoBox.style.right = '-400px';
+            // cerrar ventana de info
+            function closeInfo(event) {
+                const infoBox = document.getElementById("info-box");
+
+                if (event && infoBox.contains(event.target)) {
+                    return;
+                }
+
+                infoBox.style.right = "-400px";
                 setTimeout(() => {
-                    infoBox.style.display = 'none';
+                    infoBox.style.display = "none";
                 }, 500);
             }
 
-            // Función para abrir el modal de previsualización de imágenes
+            // abril el modal para ver imgs
             function openImagePreview(imageSrc) {
-                const modal = document.getElementById('image-preview-modal');
-                const previewImage = document.getElementById('preview-image');
-                previewImage.src = imageSrc; // Establecer la imagen seleccionada
-                modal.style.display = 'block'; // Mostrar el modal
+                const modal = document.getElementById("image-preview-modal");
+                const previewImage = document.getElementById("preview-image");
+                previewImage.src = imageSrc;
+                modal.style.display = "block";
             }
 
-            // Función para cerrar el modal de previsualización de imágenes
+            // cerrarlo :D
             function closeImagePreview() {
-                const modal = document.getElementById('image-preview-modal');
-                modal.style.display = 'none'; // Ocultar el modal
+                const modal = document.getElementById("image-preview-modal");
+                modal.style.display = "none";
             }
 
-            // Cerrar el modal al hacer clic fuera del contenido
-            window.onclick = function(event) {
-                const modal = document.getElementById('image-preview-modal');
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            };
+            // abrir imagen fullscreen
+            function openFullScreen(imgSrc) {
+            const fullScreenModal = document.getElementById("full-screen-modal");
+            const fullScreenImage = document.getElementById("full-screen-image");
 
-            let currentScene = "Entrada"; // Variable para mantener la escena actual
+            fullScreenImage.src = imgSrc;
+            fullScreenModal.style.display = "flex";
+        }
+
+            // cerrar el fullscreen
+            function closeFullScreen() {
+                document.getElementById("full-screen-modal").style.display = "none";
+            }
+
+            // evitar cierres automaticos
+            document.addEventListener("click", function (event) {
+                const previewModal = document.getElementById("image-preview-modal");
+                const galleryModal = document.getElementById("gallery-modal");
+                const fullScreenModal = document.getElementById("full-screen-modal");
+                
+                if (event.target === previewModal) {
+                    closeImagePreview();
+                }
+
+                if (event.target === galleryModal) {
+                    closeGallery();
+                }
+
+                if (event.target === fullScreenModal) {
+                    closeFullScreen();
+                }
+            });
+
+            let currentScene = "Entrada"; // escena actual
             document.addEventListener("DOMContentLoaded", () => {
                 const initialLoading = document.getElementById("initial-loading");
                 const loadingScreen = document.getElementById("loading-screen");
@@ -198,6 +279,34 @@
                 // Asegurarse de que el botón de regreso y el contenedor de rutas estén ocultos al cargar las pantallas inicial y de menú
                 backBtn.style.display = "none";
                 routeContainer.style.display = "none";
+
+                // Función para abrir la galería solo al hacer clic en el +X
+                document.getElementById("gallery-button").addEventListener("click", function (event) {
+                    event.stopPropagation(); // Evita que el clic se propague y cierre otros elementos
+                    openGallery(departamentos[departamento].imagenesVentana);
+                });
+
+                // Asegurar que las imágenes en miniatura solo abran pantalla completa cuando se haga clic en ellas
+                document.querySelectorAll(".thumbnail").forEach((thumbnail) => {
+                    thumbnail.addEventListener("click", function (event) {
+                        event.stopPropagation(); // Evita que se cierre el modal al hacer clic en una imagen
+                        openFullScreen(this.src);
+                    });
+                });
+
+                // Prevenir que la ventana informativa active eventos de cierre de modales
+                document.getElementById("info-box").addEventListener("click", function (event) {
+                    event.stopPropagation();
+                });
+
+                // Cerrar modales al hacer clic fuera de su contenido
+                document.addEventListener("click", function (event) {
+                    const galleryModal = document.getElementById("gallery-modal");
+                    const fullScreenModal = document.getElementById("full-screen-modal");
+
+                    if (event.target === galleryModal) closeGallery();
+                    if (event.target === fullScreenModal) closeFullScreen();
+                });
             });
 
             // Función para iniciar el recorrido
@@ -362,12 +471,14 @@
 
             const departamentos = {
                 "Entrada": {
-                    titulo: "Entrada Principal",
-                    descripcion: "Bienvenido a la entrada principal de FACPyA.",
+                    titulo: "Entrada principal",
+                    horario: "06:50 p.m. 08:32 p.m.",
+                    descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
                     imagen: "360images/icons/info_icon.png",
-                    contacto: "Teléfono: 123-456-7890",
-                    posicion: "0 1.5 -3", // Ajusta la posición según tu escena
-                    imagenesVentana: ["Statics/Entrada.jpg"] // Imágenes para la ventana
+                    contacto: "8122568614\nomomomom@gmail.com\nwww.hola.com",
+                    posicion: "0 1.5 -3",
+                    imagenesVentana: ["Statics/Entrada.jpg", "Statics/Auditorio.jpg", "Statics/Biblioteca.jpg",
+                        "Statics/Entrada.jpg", "Statics/Finanzas.jpg", "Statics/Stic.jpg", "Statics/Entrada.jpg", "Statics/Entrada.jpg"] // Imágenes para la ventana
                 },
                 "Lobby": {
                     titulo: "Lobby Central",
