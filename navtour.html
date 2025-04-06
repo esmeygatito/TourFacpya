@@ -27,7 +27,13 @@
         </div>
 
         <!-- structuring back to loading screen btn -->
-        <div id="back-to-loading" style="display: none;" onclick="returnToLoading()"></div>
+        <button id="backBtn" aria-label="back" style="display: none;" onclick="returnToLoading()">
+            <img id="back-to-loading" src="360images/icons/arrowback.png" alt="Back">
+        </button>
+        
+        <button id="helpBtn" aria-label="help" style="display: none;" onclick="showHelp()">
+            <img id="help-button" src="360images/icons/question.png" alt="Help">
+        </button>
  
         <!-- Menú desplegable minimalista -->
         <div id="dropdown-menu-container">
@@ -36,9 +42,6 @@
                 <!-- Las opciones del menú se generarán dinámicamente -->
             </div>
         </div>
-
-        <!-- Botón de ayuda -->
-        <button id="help-button" aria-label="Ayuda" onclick="showHelp()">?</button>
 
         <!-- Modal de ayuda -->
         <div id="help-modal" class="modal">
@@ -263,7 +266,8 @@
             document.addEventListener("DOMContentLoaded", () => {
                 const initialLoading = document.getElementById("initial-loading");
                 const loadingScreen = document.getElementById("loading-screen");
-                const backBtn = document.getElementById("back-to-loading");
+                const backBtn = document.getElementById("backBtn");
+                const helpBtn = document.getElementById("helpBtn");
                 const routeContainer = document.getElementById("route-container");
 
                 // Ocultar el contenedor de carga inicial después de 2 segundos
@@ -276,8 +280,9 @@
                     loadingScreen.style.display = "flex"; // Asegúrate de que se muestre el menú principal
                 }, 2000);
 
-                // Asegurarse de que el botón de regreso y el contenedor de rutas estén ocultos al cargar las pantallas inicial y de menú
+                // botones y ruta ocultos al iniciar
                 backBtn.style.display = "none";
+                helpBtn.style.display = "none"
                 routeContainer.style.display = "none";
 
                 // Función para abrir la galería solo al hacer clic en el +X
@@ -309,10 +314,11 @@
                 });
             });
 
-            // Función para iniciar el recorrido
+            // iniciar el recorrido
             function startTour() {
                 const loadingScreen = document.getElementById("loading-screen");
-                const backBtn = document.getElementById("back-to-loading");
+                const backBtn = document.getElementById("backBtn");
+                const helpBtn = document.getElementById("helpBtn")
                 const scene = document.querySelector("a-scene");
                 const routeContainer = document.getElementById("route-container");
                 
@@ -327,6 +333,12 @@
                     backBtn.style.opacity = '1';
                 }
 
+                if (helpBtn) {
+                    helpBtn.style.display = "block";
+                    helpBtn.style.pointerEvents = "auto";
+                    helpBtn.style.opacity = "1";
+                }
+
                 routeContainer.style.display = "flex"; // Mostrar el contenedor de rutas
                 searchContainer.style.display = "flex"; // Mostrar la barra de búsqueda
                 showRoute(currentScene); // Mostrar la ruta inicial
@@ -336,7 +348,7 @@
             function returnToLoading() {
                 const loadingScreen = document.getElementById("loading-screen");
                 const scene = document.querySelector("a-scene");
-                const backBtn = document.getElementById("back-to-loading");
+                const backBtn = document.getElementById("backBtn");
                 const routeContainer = document.getElementById("route-container");
                 
 
@@ -414,11 +426,12 @@
                 });
             }
 
-            // Función para reanudar el recorrido
+            // reanudar el recorrido
             function resumeTour() {
                 const loadingScreen = document.getElementById("loading-screen");
                 const scene = document.querySelector("a-scene");
-                const backBtn = document.getElementById("back-to-loading");
+                const backBtn = document.getElementById("backBtn");
+                const helpBtn = document.getElementById("helpBtn");
                 const resumeBtn = document.getElementById("resume-tour");
                 const routeContainer = document.getElementById("route-container");
 
@@ -430,6 +443,10 @@
                 backBtn.style.display = "block";
                 backBtn.style.pointerEvents = "auto";
                 backBtn.style.opacity = "1";
+
+                helpBtmn.style.display = "block";
+                helpBtn.style.pointerEvents = "auto";
+                helpBtn.style.opacity = "1";
 
                 // Ocultar el botón de reanudar
                 resumeBtn.style.display = "none";
