@@ -26,14 +26,15 @@
             <button class="glass-button" onclick="goToMain()" aria-label="Volver a la página principal">Volver a la página principal</button>
         </div>
 
-        <!-- structuring back to loading screen btn -->
-        <button id="backBtn" aria-label="back" style="display: none;" onclick="returnToLoading()">
-            <img id="back-to-loading" src="360images/icons/arrowback.png" alt="Back">
-        </button>
-        
-        <button id="helpBtn" aria-label="help" style="display: none;" onclick="showHelp()">
-            <img id="help-button" src="360images/icons/question.png" alt="Help">
-        </button>
+        <!--buttons (back & help)-->
+        <div id="buttons-container">
+            <button id="backBtn" onclick="returnToLoading()">
+                <img src="360images/icons/arrowback.png" alt="Back" class="icon-btn">
+            </button>
+            <button id="helpBtn" onclick="showHelp()">
+                <img src="360images/icons/question.png" alt="Help" class="icon-btn">
+            </button>
+        </div>
  
         <!-- Menú desplegable minimalista -->
         <div id="dropdown-menu-container">
@@ -215,7 +216,7 @@
                 }, 500);
             }
 
-            // abril el modal para ver imgs
+            // abrir el modal para ver imgs
             function openImagePreview(imageSrc) {
                 const modal = document.getElementById("image-preview-modal");
                 const previewImage = document.getElementById("preview-image");
@@ -269,6 +270,7 @@
                 const backBtn = document.getElementById("backBtn");
                 const helpBtn = document.getElementById("helpBtn");
                 const routeContainer = document.getElementById("route-container");
+                //const dropdownMenu = document.getElementById("dropdown-menu-container");
 
                 // Ocultar el contenedor de carga inicial después de 2 segundos
                 setTimeout(() => {
@@ -284,6 +286,7 @@
                 backBtn.style.display = "none";
                 helpBtn.style.display = "none"
                 routeContainer.style.display = "none";
+                //dropdownMenu.style.display = "none";
 
                 // Función para abrir la galería solo al hacer clic en el +X
                 document.getElementById("gallery-button").addEventListener("click", function (event) {
@@ -321,7 +324,7 @@
                 const helpBtn = document.getElementById("helpBtn")
                 const scene = document.querySelector("a-scene");
                 const routeContainer = document.getElementById("route-container");
-                
+                //const dropdownMenu = document.getElementById("dropdown-menu-container");
 
                 loadingScreen.style.display = "none"; // Ocultar la pantalla de carga
                 scene.style.display = "block"; // Mostrar la escena
@@ -341,6 +344,8 @@
 
                 routeContainer.style.display = "flex"; // Mostrar el contenedor de rutas
                 searchContainer.style.display = "flex"; // Mostrar la barra de búsqueda
+                //dropdownMenu.style.display = "flex";
+
                 showRoute(currentScene); // Mostrar la ruta inicial
             }
 
@@ -351,7 +356,6 @@
                 const backBtn = document.getElementById("backBtn");
                 const routeContainer = document.getElementById("route-container");
                 
-
                 // Mostrar la pantalla de carga con efecto de desenfoque
                 loadingScreen.style.display = "flex";
                 scene.style.filter = "blur(10px)";
@@ -1006,4 +1010,4 @@
             }
         </script>
     </body>
-</html>
+</html
