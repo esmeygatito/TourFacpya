@@ -390,7 +390,7 @@ body, html {
     left: 50%;
     transform: translateX(-50%);
     z-index: 2000;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1); /* Fondo transparente con opacidad */
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2);
@@ -404,6 +404,9 @@ body, html {
     scrollbar-width: thin; /* Scrollbar más delgado */
     scrollbar-color: #862588 transparent; /* Colores del scrollbar */
     animation: fadeIn 0.5s ease-in-out;
+    backdrop-filter: blur(10px); /* Filtro de desenfoque */
+    -webkit-backdrop-filter: blur(10px); /* Compatibilidad con Webkit */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Borde difuso */
 }
 
 /* Estilos para el scrollbar en navegadores basados en WebKit */
@@ -423,7 +426,8 @@ body, html {
 #route-container:hover {
     overflow: auto;
 }
-/* se agregan los cosos para las animacionesss */
+
+/* Animación de desvanecimiento */
 #route-container.fade-out {
     opacity: 0;
 }
@@ -435,8 +439,9 @@ body, html {
 /* Elementos individuales dentro del contenedor */
 #route-container span {
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.9rem; 
-    color: #862588;
+    font-size: 0.9rem;
+    color: #F7F7F7;
+    text-shadow:1px 1px 1px #6b1d6e;
     margin: 0 0.5rem;
     white-space: nowrap; /* Evita que los textos se envuelvan */
     overflow: hidden; 
@@ -648,114 +653,46 @@ body, html {
 /* Contenedor del menú */
 #dropdown-menu-container {
     position: fixed;
-    top: 10px;
-    left: 10px;
     z-index: 1000;
+    font-family: 'Montserrat', sans-serif;
+    display: inline-block; /* importante para que no se expanda */
+    margin: 20px;
 }
 
 /* Botón principal del menú */
-#menu-button {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    background: #ffffff;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Lista del menú desplegable */
-#dropdown-menu {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: none;
-    position: absolute;
-    top: 50px;
-    left: 0;
-    width: 200px;
-}
-
-/* Elementos del menú */
-#dropdown-menu li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-#dropdown-menu li:last-child {
-    border-bottom: none;
-}
-
-/* Botones del menú */
-#dropdown-menu button {
-    background: none;
-    border: none;
-    width: 100%;
-    text-align: left;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 10px;
-}
-
-#dropdown-menu button:hover {
-    background: #f0f0f0;
-}
-
-/* Submenús */
-#dropdown-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: none;
-    background: #f9f9f9;
-    border-left: 2px solid #ccc;
-}
-
-#dropdown-menu ul li {
-    padding: 5px 10px;
-}
-
-/* Mostrar elementos */
-.hidden {
-    display: none;
-}
-
-.visible {
-    display: block;
-}
-
-/* Contenedor del menú desplegable */
-#dropdown-menu-container {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    font-family: 'Montserrat', sans-serif;
-}
-
-/* Botón del menú desplegable */
 #dropdown-button {
-    background: rgba(255, 255, 255, 0.2); /* Glassmorphism */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* espacio entre el icono y el texto */
+    padding: 10px 20px;
+    width: auto;
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 30px;
-    color: #fff;
+    color: #F7F7F7;
+    font-weight: 500;
     font-size: 16px;
-    padding: 10px 20px;
-    cursor: pointer;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    cursor: pointer;
+    text-shadow: 1px 1px 0.5px #6b1d6e;
+}
+
+#dropdown-button img{
+    width: 20px; /* ajusta según tu preferencia */
+    height: 20px;
+    object-fit: contain;
+}
+
+#dropwdown-button p{
+    margin: 0;
+    padding: 0;
 }
 
 /* Hover y animación del botón */
 #dropdown-button:hover {
-    background: linear-gradient(135deg, #862588, #b232b5); /* Morado */
+    background: rgba(255, 255, 255, 0.3);
     color: #fff;
     transform: scale(1.05);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
@@ -772,9 +709,9 @@ body, html {
     border-radius: 15px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     padding: 10px;
-    width: 200px;
-    max-height: 300px;
-    overflow-y: auto;
+    width: auto; /* Ajusta el tamaño según el contenido */
+    min-width: 180px; /* Ajuste mínimo para que no sea demasiado pequeño */
+    max-width: 100%; /* No excede el contenedor */
     display: none;
     animation: fadeIn 0.3s ease;
 }
@@ -783,7 +720,7 @@ body, html {
 #dropdown-menu button {
     background: transparent;
     border: none;
-    color: #fff;
+    color: #F7F7F7; /* Color de texto personalizado */
     text-align: left;
     padding: 10px 15px;
     width: 100%;
@@ -795,8 +732,8 @@ body, html {
 
 /* Hover en las opciones */
 #dropdown-menu button:hover {
-    background: linear-gradient(135deg, #862588, #b232b5); /* Morado */
-    color: #fff;
+    background: linear-gradient(270deg, #862588, #b232b5); /* Morado */
+    color: #F7F7F7;
     transform: scale(1.05);
 }
 
@@ -813,22 +750,39 @@ body, html {
 }
 
 /* Responsividad para pantallas pequeñas */
-@media (max-width: 480px) {
-    #help-modal .modal-content {
-        padding: 15px;
-        font-size: 0.9rem;
+@media (max-width: 768px) {
+    #dropdown-button {
+        padding: 8px 16px;
+        font-size: 14px;
     }
 
-    #help-modal .modal-content h2 {
-        font-size: 1.2rem;
+    #dropdown-menu {
+        min-width: 160px; /* Ajuste para pantallas más pequeñas */
+        top: 50px;
     }
 
-    #help-modal .modal-content p {
-        font-size: 0.8rem;
+    #dropdown-menu button {
+        font-size: 13px;
     }
 }
 
-/* Ajustes adicionales para responsividad */
+@media (max-width: 480px) {
+    #dropdown-button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    #dropdown-menu {
+        min-width: 140px; /* Ajuste para pantallas pequeñas */
+        top: 45px;
+    }
+
+    #dropdown-menu button {
+        font-size: 12px;
+    }
+}
+
+
 
 /* Mapa */
 @media (max-width: 768px) {
@@ -890,6 +844,10 @@ body, html {
         font-size: 0.75rem;
         padding: 0.5rem;
     }
+}
+
+.clickable {
+    cursor: pointer;
 }
 
 /* ventana de info, generales */

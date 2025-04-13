@@ -22,8 +22,12 @@
             <img id="loading-logo" src="360images/icons/logo.png" alt="Logo DEVEESITES" loading="lazy">
             <h2>Recorrido virtual FACPyA</h2>
             <h1>Diseñado por DEVEESITES</h1>
-            <button class="glass-button" onclick="startTour()" aria-label="Iniciar recorrido">Iniciar recorrido</button>
-            <button class="glass-button" onclick="goToMain()" aria-label="Volver a la página principal">Volver a la página principal</button>
+            <button class="glass-button" onclick="startTour()" aria-label="Iniciar recorrido">
+                <p>Iniciar recorrido</p>
+            </button>
+            <button class="glass-button" onclick="goToMain()" aria-label="Volver a la página principal">
+                <p>Ir a la página principal</p>
+            </button>
         </div>
 
         <!--buttons (back & help)-->
@@ -38,7 +42,10 @@
  
         <!-- Menú desplegable minimalista -->
         <div id="dropdown-menu-container">
-            <button id="dropdown-button" onclick="toggleDropdownMenu()">Seleccionar Ubicación</button>
+            <button id="dropdown-button" onclick="toggleDropdownMenu()">
+                <img src="360images/icons/location_icon.png" alt="Location">
+                <p>Selecciona una ubicación</p>
+            </button>
             <div id="dropdown-menu" style="display: none;">
                 <!-- Las opciones del menú se generarán dinámicamente -->
             </div>
@@ -495,7 +502,7 @@
                     titulo: "Entrada principal",
                     horario: "06:50 p.m. 08:32 p.m.",
                     descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
-                    imagen: "360images/icons/info_icon.png",
+                    imagen: "info-icon",
                     contacto: "8122568614\nomomomom@gmail.com\nwww.hola.com",
                     posicion: "0 1.5 -3",
                     imagenesVentana: ["Statics/Entrada.jpg", "Statics/Auditorio.jpg", "Statics/Biblioteca.jpg",
@@ -504,7 +511,7 @@
                 "Lobby": {
                     titulo: "Lobby Central",
                     descripcion: "El corazón de FACPyA, donde convergen estudiantes y profesores.",
-                    imagen: "360images/icons/info_icon.png",
+                    imagen: "info_icon",
                     contacto: "Email: lobby@facpya.com",
                     posicion: "0.5 1.3 -2", // Ajusta la posición según tu escena
                     imagenesVentana: ["Statics/Auditorio.jpg"] // Imágenes para la ventana
@@ -512,7 +519,7 @@
                 "Pasillo":{
                     titulo: "Pasillo Principal",
                     descripcion: "Pasillo principal de la facultad.",
-                    imagen: "360images/icons/info_icon.png",
+                    imagen: "info_icon",
                     contacto: "Email: pasillo@facpya.com",
                     posicion: "0 1 -2",
                     imagenesVentana: ["Statics/Entrada.jpg"] // Imágenes para la ventana
@@ -520,7 +527,7 @@
                 "Intercambio":{
                     titulo: "Departamento de Intercambio",
                     descripcion: "Departamento de intercambio estudiantil.",
-                    imagen: "360images/icons/info_icon.png",
+                    imagen: "info_icon",
                     contacto: "Email: intercambio@facpya.com",
                     posicion: "0 1 -1", // Ajusta la posición según tu escena
                     rotation: "0 0 0",
@@ -529,7 +536,7 @@
                 "Titulación":{
                     titulo: "Departamento de Titulación",
                     descripcion: "Departamento de titulación.",
-                    imagen: "360images/icons/info_icon.png",
+                    imagen: "info_icon",
                     contacto: "Email: titulacion@facpya.com",
                     posicion: "0 1 -1", // Ajusta la posición según tu escena
                     rotation: "0 0 0",
@@ -538,7 +545,7 @@
                 "Biblioteca":{
                     titulo: "Biblioteca",
                     descripcion: "Biblioteca de la facultad.",
-                    imagen: "360images/icons/info_icon.png",
+                    imagen: "info_icon",
                     contacto: "Email: biblioteca@facpya.com",
                     posicion: "0 1 -1", // Ajusta la posición según tu escena
                     rotation: "0 0 0",
@@ -547,7 +554,7 @@
                 "Stic":{
                     titulo: "Centro de Cómputo STIC",
                     descripcion: "Centro de cómputo de la facultad.",
-                    imagen: "360images/icons/info_icon.png",
+                    imagen: "info_icon",
                     contacto: "Email: stic@facpya.com",
                     posicion: "0 1 -1", // Ajusta la posición según tu escena
                     rotation: "0 0 0",
@@ -786,21 +793,40 @@
                     hotspotContainer.appendChild(hotspotEl);
                     });
 
-                    // Hotspots informativos
+                    // hotspots informativos
                     for (const departamento in departamentos) {
                         if (departamentos.hasOwnProperty(departamento)) {
                             const info = departamentos[departamento];
                             const posicion = info.posicion;
-                        
-                            // Verifica si el departamento debe mostrarse en la escena actual
+
+                            // verifica si el departamento debe mostrarse en la escena actual
                             if (scene.name === departamento) {
-                                const infoHotspot = document.createElement("a-image");
-                                infoHotspot.setAttribute("src", "360images/icons/info_icon.png"); // Asegúrate de tener este icono
+                                const infoHotspot = document.createElement("a-plane"); // usamos a-plane en vez de a-image para mejor control visual
+
+                                infoHotspot.setAttribute("width", "0.7");
+                                infoHotspot.setAttribute("height", "0.7");
                                 infoHotspot.setAttribute("position", posicion);
-                                infoHotspot.setAttribute("scale", "0.5 0.5 0.5");
+                                infoHotspot.setAttribute("rotation", "0 0 0");
+
+                                infoHotspot.setAttribute("material", {
+                                    src: "360images/icons/info_icon.png",
+                                    shader: "flat",
+                                    transparent: true,
+                                    opacity: 0.95,
+                                });
+
                                 infoHotspot.setAttribute("class", "clickable");
-                                infoHotspot.setAttribute("data-scene", departamento); // Asigna el nombre del departamento
                                 infoHotspot.setAttribute("gesture-handler", "");
+                                infoHotspot.setAttribute("data-scene", departamento);
+                                infoHotspot.setAttribute("animation__hover", {
+                                    property: "scale",
+                                    dir: "alternate",
+                                    dur: 800,
+                                    easing: "easeInOutSine",
+                                    loop: true,
+                                    to: "0.8 0.8 0.8"
+                                });
+
                                 hotspotContainer.appendChild(infoHotspot);
                             }
                         }
