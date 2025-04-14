@@ -40,27 +40,29 @@
             </button>
         </div>
  
-        <!-- Menú desplegable minimalista -->
+        <!-- menu de opciones de ubicacion -->
         <div id="dropdown-menu-container">
             <button id="dropdown-button" onclick="toggleDropdownMenu()">
                 <img src="360images/icons/location_icon.png" alt="Location">
                 <p>Selecciona una ubicación</p>
             </button>
             <div id="dropdown-menu" style="display: none;">
-                <!-- Las opciones del menú se generarán dinámicamente -->
+                <!-- las opciones del menu se generar de forma dinamica -->
             </div>
         </div>
 
-        <!-- Modal de ayuda -->
-        <div id="help-modal" class="modal">
+        <!-- estructura del modal de ayuda -->
+        <div id="help-modal">
             <div class="modal-content">
-                <span class="close" onclick="closeHelp()">&times;</span>
+                <img src="360images/icons/closeicon.png" alt="Close" class="close-btn" onclick="closeHelp()">
                 <h2>Instrucciones de uso</h2>
-                <p>1. Utiliza los botones para iniciar el recorrido o volver a la página principal.</p>
-                <p>2. Usa la barra de búsqueda para encontrar ubicaciones específicas.</p>
-                <p>3. Desplázate por la barra de rutas para ver las ubicaciones disponibles.</p>
-                <p>4. Presiona los hotspots para navegar entre escenas.</p>
-                <p>¡Disfruta del recorrido virtual!</p>
+                <ol class="help-list">
+                    <li>Haz clic en los botones para iniciar el recorrido o regresar a la página principal.</li>
+                    <li>Utiliza la barra de búsqueda para localizar una ubicación específica.</li>
+                    <li>Desplázate por la barra de rutas para explorar los distintos destinos disponibles.</li>
+                    <li>Haz clic en los puntos interactivos (hotspots) para navegar entre escenas.</li>
+                </ol>
+                <p>¡Explora y disfruta del recorrido virtual!</p>
             </div>
         </div>
 
@@ -81,7 +83,7 @@
         <!-- ventana informativa -->
         <div id="info-box">
             <div id="info-box-header">
-                <button id="close-btn" onclick="closeInfo()">✖</button>
+                <img src="360images/icons/closeicon.png" id="close-btn" alt="Close" class="close-btn" onclick="closeInfo()">
             </div>
             <h1 id="dept-name"></h1>
             <p id="info-box-time"></p>
@@ -91,18 +93,23 @@
             </div>
             <p id="info-content"></p>
             <pre id="info-contact" class="contact-info"></pre>
+
+            <!-- Modal de Galería -->
             <div id="gallery-modal" class="modal">
                 <div class="modal-content">
-                    <span class="close" onclick="closeGallery()">✖</span>
-                    <div id="gallery-content"></div>
+                    <!-- Botón para cerrar la galería -->
+                    <img src="360images/icons/closeicon.png" id="close-gallery-btn" alt="Cerrar" class="close-btn" onclick="closeGallery()">
+                    <div id="gallery-content"></div> <!-- Contenedor de las imágenes de la galería -->
                 </div>
             </div>
 
-            <!--full screen modal-->
+            <!-- Modal para imagen a pantalla completa -->
             <div id="full-screen-modal" class="modal">
-                <span class="close" onclick="closeFullScreen()">✖</span>
-                <img id="full-screen-image" class="full-screen-img">
+                <!-- Botón para cerrar la imagen a pantalla completa -->
+                <img src="360images/icons/closeicon.png" id="close-full-screen-btn" alt="Cerrar" class="close-btn" onclick="closeFullScreen()">
+                <img id="full-screen-image" class="full-screen-img" alt="Imagen a pantalla completa">
             </div>
+
 
         </div>
 
@@ -121,89 +128,88 @@
         </a-scene>
 
         <script>
-            // Componente de A-Frame para manejar gestos en los hotspots
             AFRAME.registerComponent('gesture-handler', {
-                init: function () {
-                    const sceneName = this.el.getAttribute('data-scene'); // Obtener el nombre de la escena del atributo
-                    this.el.addEventListener('click', () => openInfo(sceneName));
+            init: function () {
+                const sceneName = this.el.getAttribute('data-scene'); // Obtener el nombre de la escena del atributo
+                this.el.addEventListener('click', () => openInfo(sceneName));
 
-                    // Capturar toques en dispositivos móviles (tap)
-                    this.el.addEventListener('touchstart', (event) => {
-                        event.preventDefault();
-                        openInfo(sceneName);
-                    });
-                }
-            });
+                // Capturar toques en dispositivos móviles (tap)
+                this.el.addEventListener('touchstart', (event) => {
+                    event.preventDefault();
+                    openInfo(sceneName);
+                });
+            }
+        });
 
             // abrir la ventana informativa
             function openInfo(departamento) {
-            const infoBox = document.getElementById('info-box');
-            const infoTitle = document.getElementById('dept-name');
-            const infoTime = document.getElementById('info-box-time');
-            const mainImage = document.getElementById('info-image');
-            const infoDescription = document.getElementById('info-content');
-            const infoContact = document.getElementById('info-contact');
-            const thumbnailContainer = document.getElementById('thumbnail-container');
+                const infoBox = document.getElementById('info-box');
+                const infoTitle = document.getElementById('dept-name');
+                const infoTime = document.getElementById('info-box-time');
+                const mainImage = document.getElementById('info-image');
+                const infoDescription = document.getElementById('info-content');
+                const infoContact = document.getElementById('info-contact');
+                const thumbnailContainer = document.getElementById('thumbnail-container');
 
-            // se obtiene la info de cada dpto
-            const info = departamentos[departamento];
+                // se obtiene la info de cada dpto
+                const info = departamentos[departamento];
 
-            if (info) {
-                // actualizar datos
-                infoTitle.textContent = info.titulo;
-                infoTime.textContent = info.horario;
-                mainImage.src = info.imagenesVentana[0];
-                mainImage.onclick = () => openFullScreen(info.imagenesVentana[0]);
-                infoDescription.textContent = info.descripcion;
-                infoContact.textContent = info.contacto;
+                if (info) {
+                    // actualizar datos
+                    infoTitle.textContent = info.titulo;
+                    infoTime.textContent = info.horario;
+                    mainImage.src = info.imagenesVentana[0];
+                    mainImage.onclick = () => openFullScreen(info.imagenesVentana[0]);
+                    infoDescription.textContent = info.descripcion;
+                    infoContact.textContent = info.contacto;
 
-                thumbnailContainer.innerHTML = '';
-                const maxThumbnails = 2; // mostrar dos miniaturas
+                    thumbnailContainer.innerHTML = '';
+                    const maxThumbnails = 2; // mostrar dos miniaturas
 
-                info.imagenesVentana.slice(1, maxThumbnails).forEach((imgSrc) => {
-                    const thumbnail = document.createElement('img');
-                    thumbnail.src = imgSrc;
-                    thumbnail.alt = "Miniatura";
-                    thumbnail.classList.add('thumbnail');
-                    thumbnail.onclick = () => openFullScreen(imgSrc); // ampliar imagen al hacer clic
-                    thumbnailContainer.appendChild(thumbnail);
+                    info.imagenesVentana.slice(1, maxThumbnails).forEach((imgSrc) => {
+                        const thumbnail = document.createElement('img');
+                        thumbnail.src = imgSrc;
+                        thumbnail.alt = "Miniatura";
+                        thumbnail.classList.add('thumbnail');
+                        thumbnail.onclick = () => openFullScreen(imgSrc); // ampliar imagen al hacer clic
+                        thumbnailContainer.appendChild(thumbnail);
+                    });
+
+                    // "+x" si hay mas imgs
+                    if (info.imagenesVentana.length > maxThumbnails) {
+                        const moreImages = document.createElement("div");
+                        moreImages.classList.add("more-thumbnails");
+                        moreImages.innerText = `+${info.imagenesVentana.length - maxThumbnails}`;
+                        moreImages.onclick = () => openGallery(info.imagenesVentana);
+                        thumbnailContainer.appendChild(moreImages);
+                    }
+
+                    // mostrar la ventana con block
+                    infoBox.style.display = "block";
+                    setTimeout(() => {
+                        infoBox.style.right = '0';
+                    }, 10);
+                }
+            }
+
+            // abrir la galería de imágenes
+            function openGallery(images) {
+                const modal = document.getElementById("gallery-modal");
+                const modalContent = document.getElementById("gallery-content");
+                modalContent.innerHTML = "";
+
+                images.forEach((imgSrc) => {
+                    const img = document.createElement("img");
+                    img.src = imgSrc;
+                    img.classList.add("gallery-img");
+                    img.onclick = () => openFullScreen(imgSrc);
+                    modalContent.appendChild(img);
                 });
 
-                // "+x" si hay mas imgs
-                if (info.imagenesVentana.length > maxThumbnails) {
-                    const moreImages = document.createElement("div");
-                    moreImages.classList.add("more-thumbnails");
-                    moreImages.innerText = `+${info.imagenesVentana.length - maxThumbnails}`;
-                    moreImages.onclick = () => openGallery(info.imagenesVentana);
-                    thumbnailContainer.appendChild(moreImages);
-                }
-
-                // mostrar la ventana con block
-                infoBox.style.display = 'block';
-                setTimeout(() => {
-                    infoBox.style.right = '0';
-                }, 10);
+                modal.style.display = "block";
             }
-        }
 
-            // abrir el modal de + imagenes
-            function openGallery(images) {
-            const modal = document.getElementById("gallery-modal");
-            const modalContent = document.getElementById("gallery-content");
-            modalContent.innerHTML = "";
-
-            images.forEach((imgSrc) => {
-                const img = document.createElement("img");
-                img.src = imgSrc;
-                img.classList.add("gallery-img");
-                img.onclick = () => openFullScreen(imgSrc);
-                modalContent.appendChild(img);
-            });
-
-            modal.style.display = "block";
-        }
-
-            // cerrar el modal de la galeria de imagenes
+            // cerrar el modal de la galería
             function closeGallery() {
                 const modal = document.getElementById("gallery-modal");
                 modal.style.display = "none";
@@ -223,35 +229,21 @@
                 }, 500);
             }
 
-            // abrir el modal para ver imgs
-            function openImagePreview(imageSrc) {
-                const modal = document.getElementById("image-preview-modal");
-                const previewImage = document.getElementById("preview-image");
-                previewImage.src = imageSrc;
-                modal.style.display = "block";
-            }
-
-            // cerrarlo :D
-            function closeImagePreview() {
-                const modal = document.getElementById("image-preview-modal");
-                modal.style.display = "none";
-            }
-
-            // abrir imagen fullscreen
+            // abrir imagen en pantalla completa
             function openFullScreen(imgSrc) {
-            const fullScreenModal = document.getElementById("full-screen-modal");
-            const fullScreenImage = document.getElementById("full-screen-image");
+                const fullScreenModal = document.getElementById("full-screen-modal");
+                const fullScreenImage = document.getElementById("full-screen-image");
 
-            fullScreenImage.src = imgSrc;
-            fullScreenModal.style.display = "flex";
-        }
+                fullScreenImage.src = imgSrc;
+                fullScreenModal.style.display = "flex";
+            }
 
-            // cerrar el fullscreen
+            // cerrar el modal a pantalla completa
             function closeFullScreen() {
                 document.getElementById("full-screen-modal").style.display = "none";
             }
 
-            // evitar cierres automaticos
+            // evitar cierres auttomaticos
             document.addEventListener("click", function (event) {
                 const previewModal = document.getElementById("image-preview-modal");
                 const galleryModal = document.getElementById("gallery-modal");
@@ -279,14 +271,12 @@
                 const routeContainer = document.getElementById("route-container");
                 //const dropdownMenu = document.getElementById("dropdown-menu-container");
 
-                // Ocultar el contenedor de carga inicial después de 2 segundos
                 setTimeout(() => {
-                    initialLoading.style.display = "none"; // Ocultar completamente del flujo del DOM
+                    initialLoading.style.display = "none"; // ocultar el flujo del dom
                 }, 2000);
 
-                // Mostrar la pantalla principal del menú después de 2 segundos
                 setTimeout(() => {
-                    loadingScreen.style.display = "flex"; // Asegúrate de que se muestre el menú principal
+                    loadingScreen.style.display = "flex";
                 }, 2000);
 
                 // botones y ruta ocultos al iniciar
@@ -295,26 +285,25 @@
                 routeContainer.style.display = "none";
                 //dropdownMenu.style.display = "none";
 
-                // Función para abrir la galería solo al hacer clic en el +X
+                // abrir galeria al dar clic en +x
                 document.getElementById("gallery-button").addEventListener("click", function (event) {
-                    event.stopPropagation(); // Evita que el clic se propague y cierre otros elementos
+                    event.stopPropagation();
                     openGallery(departamentos[departamento].imagenesVentana);
                 });
 
-                // Asegurar que las imágenes en miniatura solo abran pantalla completa cuando se haga clic en ellas
+                // abrir imgs de miniatura al hacer clic
                 document.querySelectorAll(".thumbnail").forEach((thumbnail) => {
                     thumbnail.addEventListener("click", function (event) {
-                        event.stopPropagation(); // Evita que se cierre el modal al hacer clic en una imagen
+                        event.stopPropagation();
                         openFullScreen(this.src);
                     });
                 });
 
-                // Prevenir que la ventana informativa active eventos de cierre de modales
                 document.getElementById("info-box").addEventListener("click", function (event) {
                     event.stopPropagation();
                 });
 
-                // Cerrar modales al hacer clic fuera de su contenido
+                // cerrar modales al hacer clic fuera de su contenido
                 document.addEventListener("click", function (event) {
                     const galleryModal = document.getElementById("gallery-modal");
                     const fullScreenModal = document.getElementById("full-screen-modal");
