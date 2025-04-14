@@ -229,85 +229,93 @@
                 }, 500);
             }
 
-            // abrir imagen en pantalla completa
+            // Función para abrir la imagen en modo fullscreen
             function openFullScreen(imgSrc) {
                 const fullScreenModal = document.getElementById("full-screen-modal");
                 const fullScreenImage = document.getElementById("full-screen-image");
 
+                // Establecer la fuente de la imagen
                 fullScreenImage.src = imgSrc;
+
+                // Mostrar el modal
                 fullScreenModal.style.display = "flex";
+
+                // Solicitar fullscreen para el modal
+                if (fullScreenModal.requestFullscreen) {
+                    fullScreenModal.requestFullscreen();
+                } else if (fullScreenModal.webkitRequestFullscreen) { // Soporte para Safari
+                    fullScreenModal.webkitRequestFullscreen();
+                } else if (fullScreenModal.msRequestFullscreen) { // Soporte para IE/Edge
+                    fullScreenModal.msRequestFullscreen();
+                }
             }
 
-            // cerrar el modal a pantalla completa
+            // Función para cerrar el modal y salir del modo fullscreen
             function closeFullScreen() {
-                document.getElementById("full-screen-modal").style.display = "none";
-            }
-
-            // evitar cierres auttomaticos
-            document.addEventListener("click", function (event) {
-                const previewModal = document.getElementById("image-preview-modal");
-                const galleryModal = document.getElementById("gallery-modal");
                 const fullScreenModal = document.getElementById("full-screen-modal");
-                
-                if (event.target === previewModal) {
-                    closeImagePreview();
-                }
 
-                if (event.target === galleryModal) {
-                    closeGallery();
-                }
+                // Ocultar el modal
+                fullScreenModal.style.display = "none";
 
-                if (event.target === fullScreenModal) {
-                    closeFullScreen();
+                // Salir del modo fullscreen si está activo
+                if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) { // Soporte para Safari
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) { // Soporte para IE/Edge
+                        document.msExitFullscreen();
+                    }
                 }
-            });
+            }
 
             let currentScene = "Entrada"; // escena actual
+            // contenedor de busqueda
             document.addEventListener("DOMContentLoaded", () => {
                 const initialLoading = document.getElementById("initial-loading");
                 const loadingScreen = document.getElementById("loading-screen");
                 const backBtn = document.getElementById("backBtn");
                 const helpBtn = document.getElementById("helpBtn");
                 const routeContainer = document.getElementById("route-container");
-                //const dropdownMenu = document.getElementById("dropdown-menu-container");
-
+                const dropdownMenuContainer = document.getElementById("dropdown-menu-container"); // Seleccionar el botón de ubicación
+            
                 setTimeout(() => {
-                    initialLoading.style.display = "none"; // ocultar el flujo del dom
+                    initialLoading.style.display = "none"; // Ocultar el flujo del DOM
                 }, 2000);
-
+            
                 setTimeout(() => {
                     loadingScreen.style.display = "flex";
                 }, 2000);
-
-                // botones y ruta ocultos al iniciar
+            
+                // Ocultar botones y contenedores al iniciar
                 backBtn.style.display = "none";
-                helpBtn.style.display = "none"
+                helpBtn.style.display = "none";
                 routeContainer.style.display = "none";
-                //dropdownMenu.style.display = "none";
-
-                // abrir galeria al dar clic en +x
+                dropdownMenuContainer.style.display = "none"; // Ocultar el botón de ubicación
+            
+                // Abrir galería al dar clic en +x
                 document.getElementById("gallery-button").addEventListener("click", function (event) {
                     event.stopPropagation();
                     openGallery(departamentos[departamento].imagenesVentana);
                 });
-
-                // abrir imgs de miniatura al hacer clic
+            
+                // Abrir imágenes de miniatura al hacer clic
                 document.querySelectorAll(".thumbnail").forEach((thumbnail) => {
                     thumbnail.addEventListener("click", function (event) {
                         event.stopPropagation();
                         openFullScreen(this.src);
                     });
                 });
-
+            
                 document.getElementById("info-box").addEventListener("click", function (event) {
                     event.stopPropagation();
                 });
-
-                // cerrar modales al hacer clic fuera de su contenido
+            
+                // Cerrar modales al hacer clic fuera de su contenido
                 document.addEventListener("click", function (event) {
                     const galleryModal = document.getElementById("gallery-modal");
                     const fullScreenModal = document.getElementById("full-screen-modal");
-
+            
                     if (event.target === galleryModal) closeGallery();
                     if (event.target === fullScreenModal) closeFullScreen();
                 });
@@ -317,32 +325,41 @@
             function startTour() {
                 const loadingScreen = document.getElementById("loading-screen");
                 const backBtn = document.getElementById("backBtn");
-                const helpBtn = document.getElementById("helpBtn")
+                const helpBtn = document.getElementById("helpBtn");
                 const scene = document.querySelector("a-scene");
                 const routeContainer = document.getElementById("route-container");
-                //const dropdownMenu = document.getElementById("dropdown-menu-container");
-
-                loadingScreen.style.display = "none"; // Ocultar la pantalla de carga
-                scene.style.display = "block"; // Mostrar la escena
+                const dropdownMenuContainer = document.getElementById("dropdown-menu-container"); // Seleccionar el botón de ubicación
+            
+                // Ocultar la pantalla de carga
+                loadingScreen.style.display = "none";
+            
+                // Mostrar la escena
+                scene.style.display = "block";
                 scene.style.filter = "none"; // Quitar el efecto de desenfoque
-
+            
+                // Mostrar los botones y contenedores
                 if (backBtn) {
-                    backBtn.style.display = 'block'; // Mostrar el botón
-                    backBtn.style.pointerEvents = 'auto';
-                    backBtn.style.opacity = '1';
+                    backBtn.style.display = "block";
+                    backBtn.style.pointerEvents = "auto";
+                    backBtn.style.opacity = "1";
                 }
-
+            
                 if (helpBtn) {
                     helpBtn.style.display = "block";
                     helpBtn.style.pointerEvents = "auto";
                     helpBtn.style.opacity = "1";
                 }
-
-                routeContainer.style.display = "flex"; // Mostrar el contenedor de rutas
-                searchContainer.style.display = "flex"; // Mostrar la barra de búsqueda
-                //dropdownMenu.style.display = "flex";
-
-                showRoute(currentScene); // Mostrar la ruta inicial
+            
+                if (routeContainer) {
+                    routeContainer.style.display = "flex";
+                }
+            
+                if (dropdownMenuContainer) {
+                    dropdownMenuContainer.style.display = "flex"; // Mostrar el botón de ubicación
+                }
+            
+                // Mostrar la ruta inicial
+                showRoute(currentScene);
             }
 
             // Función para volver a la pantalla de carga
@@ -351,19 +368,16 @@
                 const scene = document.querySelector("a-scene");
                 const backBtn = document.getElementById("backBtn");
                 const routeContainer = document.getElementById("route-container");
-                
+                const dropdownMenuContainer = document.getElementById("dropdown-menu-container"); // Seleccionar el botón de ubicación
+            
                 // Mostrar la pantalla de carga con efecto de desenfoque
                 loadingScreen.style.display = "flex";
                 scene.style.filter = "blur(10px)";
-
-                // Efecto de iluminación al clickear el botón
-                backBtn.style.pointerEvents = "none";
-                backBtn.style.opacity = "0.5";
-
-                // Ocultar el botón de regreso
+            
+                // Ocultar elementos
                 backBtn.style.display = "none";
-                routeContainer.style.display = "none"; // Mostrar el contenedor de rutas
-                searchContainer.style.display = "none"; // Mostrar la barra de búsqueda
+                routeContainer.style.display = "none";
+                dropdownMenuContainer.style.display = "none"; // Ocultar el botón de ubicación
             }
 
             const mapContainer = document.getElementById("map-container");
@@ -787,35 +801,57 @@
                         if (departamentos.hasOwnProperty(departamento)) {
                             const info = departamentos[departamento];
                             const posicion = info.posicion;
-
-                            // verifica si el departamento debe mostrarse en la escena actual
+                    
+                            // Verifica si el departamento debe mostrarse en la escena actual
                             if (scene.name === departamento) {
-                                const infoHotspot = document.createElement("a-plane"); // usamos a-plane en vez de a-image para mejor control visual
-
+                                const infoHotspot = document.createElement("a-plane");
+                    
                                 infoHotspot.setAttribute("width", "0.7");
                                 infoHotspot.setAttribute("height", "0.7");
                                 infoHotspot.setAttribute("position", posicion);
                                 infoHotspot.setAttribute("rotation", "0 0 0");
-
+                    
                                 infoHotspot.setAttribute("material", {
                                     src: "360images/icons/info_icon.png",
                                     shader: "flat",
                                     transparent: true,
                                     opacity: 0.95,
                                 });
-
-                                infoHotspot.setAttribute("class", "clickable");
+                    
+                                infoHotspot.setAttribute("class", "info-hotspot clickable");
                                 infoHotspot.setAttribute("gesture-handler", "");
                                 infoHotspot.setAttribute("data-scene", departamento);
-                                infoHotspot.setAttribute("animation__hover", {
+                    
+                                // Animación de escala
+                                infoHotspot.setAttribute("animation__scale", {
                                     property: "scale",
                                     dir: "alternate",
-                                    dur: 800,
+                                    dur: 1500,
                                     easing: "easeInOutSine",
                                     loop: true,
-                                    to: "0.8 0.8 0.8"
+                                    to: "1.2 1.2 1.2"
                                 });
-
+                    
+                                // Animación de rotación
+                                infoHotspot.setAttribute("animation__rotation", {
+                                    property: "rotation",
+                                    dir: "alternate",
+                                    dur: 2000,
+                                    easing: "easeInOutSine",
+                                    loop: true,
+                                    to: "0 360 0"
+                                });
+                    
+                                // Animación de pulso
+                                infoHotspot.setAttribute("animation__pulse", {
+                                    property: "material.opacity",
+                                    dir: "alternate",
+                                    dur: 1000,
+                                    easing: "easeInOutSine",
+                                    loop: true,
+                                    to: 0.8
+                                });
+                    
                                 hotspotContainer.appendChild(infoHotspot);
                             }
                         }
