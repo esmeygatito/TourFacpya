@@ -6,6 +6,8 @@
         <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
         <script src="rec_facial.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
         <link rel="icon" href="360images/icons/logo.png" type="image/x-icon">
         <link rel = "stylesheet" type = "text/css" href = "tour.css">
         <title>DEVEETOUR</title>
@@ -277,7 +279,13 @@
                 const backBtn = document.getElementById("backBtn");
                 const helpBtn = document.getElementById("helpBtn");
                 const routeContainer = document.getElementById("route-container");
-                const dropdownMenuContainer = document.getElementById("dropdown-menu-container"); // Seleccionar el botón de ubicación
+                const dropdownMenuContainer = document.getElementById("dropdown-menu-container");
+                const infoBoxContainer = document.getElementById("info-box"); // Contenedor de la ventana informativa
+
+                // Detener el evento de zoom con la rueda del mouse dentro de la info box
+                infoBoxContainer.addEventListener("wheel", (event) => {
+                    event.stopPropagation(); // Detiene la propagación del evento hacia el zoom
+                });
             
                 setTimeout(() => {
                     initialLoading.style.display = "none"; // Ocultar el flujo del DOM
@@ -291,7 +299,8 @@
                 backBtn.style.display = "none";
                 helpBtn.style.display = "none";
                 routeContainer.style.display = "none";
-                dropdownMenuContainer.style.display = "none"; // Ocultar el botón de ubicación
+                dropdownMenuContainer.style.display = "none";
+                infoBoxContainer.style.display = "none"; // Ocultar la ventana informativa al inicio
             
                 // Abrir galería al dar clic en +x
                 document.getElementById("gallery-button").addEventListener("click", function (event) {
@@ -369,7 +378,8 @@
                 const backBtn = document.getElementById("backBtn");
                 const routeContainer = document.getElementById("route-container");
                 const dropdownMenuContainer = document.getElementById("dropdown-menu-container"); // Seleccionar el botón de ubicación
-            
+                const infoBoxContainer = document.getElementById("info-box"); // Seleccionar el modal de info box
+
                 // Mostrar la pantalla de carga con efecto de desenfoque
                 loadingScreen.style.display = "flex";
                 scene.style.filter = "blur(10px)";
@@ -378,6 +388,7 @@
                 backBtn.style.display = "none";
                 routeContainer.style.display = "none";
                 dropdownMenuContainer.style.display = "none"; // Ocultar el botón de ubicación
+                infoBoxContainer.style.display = "none"; // Ocultar el modal de info box
             }
 
             const mapContainer = document.getElementById("map-container");
