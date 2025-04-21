@@ -582,6 +582,7 @@
             const scenes = {
                 Entrada: {
                     image: "360images/Entrada/1.webp",
+                    imageLow: "360images/Entrada/1-low.webp",
                     hotspots: [
                         {
                             position: "-1 1 0",
@@ -595,6 +596,7 @@
                 },
                 Lobby: {
                     image: "360images/Lobby/2.webp",
+                    imageLow:"360images/Lobby/2-low.webp",
                     hotspots: [
                         {
                             position: "-1 1 0",
@@ -615,6 +617,7 @@
                 },
                 Pasillo: {
                     image: "360images/Pasillo_principal/3.webp",
+                    imageLow:"360images/Pasillo_principal/3-low.webp",
                     hotspots: [
                         {
                             position: "1 1 -0.20",
@@ -635,6 +638,7 @@
                 },
                 Intercambio: {
                     image: "360images/Intercambio/4.webp",
+                    imageLow:"360images/Intercambio/4-low.webp",
                     hotspots: [
                         {
                             position: "-0.3 1 1",
@@ -655,6 +659,7 @@
                 },
                 Titulación: {
                     image: "360images/Titulacion/5.webp",
+                    imageLow:"360images/Titulacion/5-low.webp",
                     hotspots: [
                         {
                             position: "-0.3 1 1",
@@ -675,6 +680,7 @@
                 },
                 Biblioteca: {
                     image: "360images/Biblioteca/6.webp",
+                    imageLow:"360images/Biblioteca/6-low.webp",
                     hotspots: [
                         {
                             position: "-0.3 1 1",
@@ -695,6 +701,7 @@
                 },
                 Stic: {
                     image: "360images/cp_stic/7.webp",
+                    imageLow:"360images/cp-stic/7-low.webp",
                     hotspots: [
                         {
                             position: "-0.3 1 1",
@@ -736,17 +743,19 @@
                 panorama.classList.add('fade');
                 console.log('Clase fade añadida');
             
-                // Cambiar la imagen del panorama después de un pequeño retraso para permitir la animación
-                setTimeout(() => {
+                panorama.setAttribute("src", scene.imageLow);
+
+                const highImg = new Image();
+                highImg.src = scene.image;
+
+                highImg.onload = () => {
                     panorama.setAttribute("src", scene.image);
-                    console.log('Imagen cambiada');
-            
-                    // Quitar la clase fade después de que la imagen cambie
-                    panorama.addEventListener('load', () => {
+                }
+
+                panorama.addEventListener('load', () => {
                         panorama.classList.remove('fade');
                         console.log('Clase fade eliminada');
-                    }, { once: true });
-                }, 750); // Ajusta el tiempo según sea necesario
+                }, { once: true });
             
                 // Actualizar los hotspots
                 updateHotspots(scene);
