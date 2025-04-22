@@ -137,10 +137,11 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(134, 37, 136, 0.3); /* Adjusted color */
+    background: linear-gradient(270deg, #862588, #b232b5, #863089, #810f9b);
+    background-size: 800% 800%;
+    animation: auroraGradient 15s ease infinite;
+    backdrop-filter: blur(10px);
     z-index: 1000;
-    animation: fadeOut 2s ease-in-out forwards;
-    animation-delay: 2s;
 }
 
 #initial-loading h2 {
@@ -172,6 +173,18 @@ body, html {
 }
 
 /* dynamic animations */
+@keyframes auroraGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -318,13 +331,13 @@ body, html {
     }
 }
 
-/* Fade in/out classes */
+/* fade in/out classes */
 .fade-out {
-    animation: fadeOut 1s ease-in-out forwards;
+    animation: fadeOut 1.5s ease-in-out forwards;
 }
 
 .fade-in {
-    animation: fadeIn 1s ease-in-out forwards;
+    animation: fadeIn 1.5s ease-in-out forwards;
 }
 
 /* Search container styles */

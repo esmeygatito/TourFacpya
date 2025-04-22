@@ -288,9 +288,12 @@
                 });
             
                 setTimeout(() => {
-                    initialLoading.style.display = "none"; // Ocultar el flujo del DOM
-                }, 2000);
-            
+                    initialLoading.classList.add("fade-out");
+                    setTimeout(() => {
+                        initialLoading.style.display = "none";
+                    }, 1000); // aqui se sincroniza con el css de animacion inicial
+                }, 2000);  // si el efecto tarda mas, se ajusta para cargarlo correctamente
+
                 setTimeout(() => {
                     loadingScreen.style.display = "flex";
                 }, 2000);
@@ -779,9 +782,10 @@
                     hotspotEl.setAttribute("geometry", hotspot.geometry);
                     hotspotEl.setAttribute("material", {
                         src: hotspot.material.split('src: ')[1].split(';')[0],
+                        shader: "flat",
                         transparent: true,
-                        opacity: 0.8,  // Start with visible opacity
-                        side: 'double' // Make the plane visible from both sides
+                        opacity: 0.95,
+                        side: 'double'
                     });
                     
                     // Set position and rotation
@@ -836,6 +840,7 @@
                                     shader: "flat",
                                     transparent: true,
                                     opacity: 0.95,
+                                    side: 'double'
                                 });
                     
                                 infoHotspot.setAttribute("class", "info-hotspot clickable");
@@ -877,7 +882,7 @@
                         }
                     }
                 }
-
+                
             // Cargar la escena inicial
             loadScene("Entrada");
 
