@@ -142,8 +142,8 @@ body, html {
     animation: auroraGradient 15s ease infinite;
     backdrop-filter: blur(10px);
     z-index: 1000;
-    /*animation: fadeOut 2s ease-in-out forwards;
-    animation-delay: 2s;*/
+    animation: fadeOut 2s ease-in-out forwards;
+    animation-delay: 2s;
 }
 
 #initial-loading h2 {
@@ -175,6 +175,18 @@ body, html {
 }
 
 /* dynamic animations */
+@keyframes auroraGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -335,11 +347,11 @@ body, html {
 
 /* fade in/out classes */
 .fade-out {
-    animation: fadeOut 1s ease-in-out forwards;
+    animation: fadeOut 1.5s ease-in-out forwards;
 }
 
 .fade-in {
-    animation: fadeIn 1s ease-in-out forwards;
+    animation: fadeIn 1.5s ease-in-out forwards;
 }
 
 /* Search container styles */
