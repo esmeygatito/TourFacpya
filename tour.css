@@ -142,6 +142,8 @@ body, html {
     animation: auroraGradient 15s ease infinite;
     backdrop-filter: blur(10px);
     z-index: 1000;
+    animation: fadeOut 2s ease-in-out forwards;
+    animation-delay: 2s;
 }
 
 #initial-loading h2 {
@@ -203,6 +205,18 @@ body, html {
 @keyframes slideIn {
     from { transform: translateY(3.125rem); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes auroraGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* Add specific styles for panorama transitions */
